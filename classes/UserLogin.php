@@ -1,6 +1,6 @@
 <?php 
 require_once 'lib/session.php';
-//Session::checkLogin();
+Session::checkLogin();
 require_once 'lib/database.php';
 require_once 'helpers/format.php';
 
@@ -58,7 +58,7 @@ class UserLogin
 				Session::set('userlogin',true);
 				Session::set('userid',$value['userId']);
 				Session::set('fullname',$value['fullname']);
-				header("Location:feeds.php");
+				header("Location:profile.php");
 					}else{
 						$msg = "<div class='alert alert-danger' role='alert'>Something went wrong!!.</div>";
 						return $msg;
