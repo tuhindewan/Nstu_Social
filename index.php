@@ -1,3 +1,14 @@
+<?php 
+require_once 'classes/User.php';
+$user = new User();
+?>
+
+<?php 
+if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['register'])) {
+   $userReg = $user->userRegistration($_POST);
+}
+?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -60,12 +71,12 @@
                       <h4 class="m-b-0"><span class="icon-text">Login</span></h4>
                       <p class="text-muted">Access your account</p>
                     </div>
-                    <form action="http://demos.bootdey.com/dayday/index.html" method="get">
+                    <form action="" method="POST">
                       <div class="form-group">
-                        <input type="email" class="form-control" placeholder="Email Address">
+                        <input type="email" class="form-control" name="email" placeholder="Email Address">
                       </div>
                       <div class="form-group">
-                        <input type="password" class="form-control" placeholder="Password">
+                        <input type="password" class="form-control" name="password" placeholder="Password">
                         <a href="#" class="pull-xs-right">
                           <small>Forgot?</small>
                         </a>
@@ -81,24 +92,29 @@
                 </div>
                 <div class="card">
                   <div class="card-block center">
+                  <?php 
+                      if (isset($userReg)) {
+                        echo $userReg;
+                      }
+                  ?>
                     <h4 class="m-b-0">
                       <span class="icon-text">Sign Up</span>
                     </h4>
                     <p class="text-muted">Create a new account</p>
-                    <form action="http://demos.bootdey.com/dayday/index.html" method="get">
+                    <form action="" method="POST">
                       <div class="form-group">
-                        <input type="text" class="form-control" placeholder="Full Name">
+                        <input type="text" class="form-control" name="fullname" placeholder="Full Name">
                       </div>
                       <div class="form-group">
-                        <input type="email" class="form-control" placeholder="Email">
+                        <input type="email" class="form-control" name="email" placeholder="Email">
                       </div>
                       <div class="form-group">
-                        <input type="password" class="form-control" placeholder="Password">
+                        <input type="password" class="form-control" name="password" placeholder="Password">
                       </div>
                       <div class="form-group">
-                        <input type="password" class="form-control" placeholder="Confirm Password">
+                        <input type="password" class="form-control" name="confirmPassword" placeholder="Confirm Password">
                       </div>
-                      <button type="submit" class="btn btn-azure">Register</button>
+                      <button type="submit" class="btn btn-azure" name="register">Register</button>
                     </form>
                   </div>
                 </div>
@@ -106,6 +122,7 @@
             </div>
           </div>
       </div>
+    </div>  
 
       <footer class="footer">
         <div class="container">
