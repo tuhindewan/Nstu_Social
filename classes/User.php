@@ -59,7 +59,7 @@ class User
 			$query = "SELECT * FROM users WHERE email = '$email' LIMIT 1";
 			$mailchk = $this->db->select($query);
 		if ($mailchk==true) {
-			$msg = "<div class='alert alert-danger' role='alert'>Email Already Exists.</div>";
+			$msg = "<div class='alert alert-danger' role='alert'>Email Already in Used.</div>";
 			return $msg;
 		}else{
 

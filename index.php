@@ -1,11 +1,18 @@
 <?php 
 require_once 'classes/User.php';
 $user = new User();
+require_once 'classes/UserLogin.php';
+$log = new UserLogin();
 ?>
 
 <?php 
 if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['register'])) {
    $userReg = $user->userRegistration($_POST);
+}
+?>
+<?php 
+if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['login'])) {
+   $userLog = $log->userLogin($_POST);
 }
 ?>
 
@@ -68,6 +75,11 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['register'])) {
                 <div class="card">
                   <div class="card-block">
                     <div class="center">
+                    <?php 
+                      if (isset($userLog)) {
+                        echo $userLog;
+                      }
+                    ?>
                       <h4 class="m-b-0"><span class="icon-text">Login</span></h4>
                       <p class="text-muted">Access your account</p>
                     </div>
@@ -83,9 +95,7 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['register'])) {
                         <div class="clearfix"></div>
                       </div>
                       <div class="center">
-                        <a href="profile.html" class="btn  btn-azure">
-                          Login
-                        </a>
+                        <button type="submit" name="login" class="btn btn-azure">Login</button>
                       </div>
                     </form>
                   </div>

@@ -38,9 +38,10 @@ class Session{
  public static function checkLogin(){
   self::init();
   if (self::get("userlogin")== true) {
-   header("Location:feeds.php");
+   header("Location:profile.php");
   }
  }
+
 
  public static function destroy(){
   session_destroy();
