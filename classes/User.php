@@ -61,6 +61,9 @@ class User
 		if ($mailchk==true) {
 			$msg = "<div class='alert alert-danger' role='alert'>Email Already in Used.</div>";
 			return $msg;
+		}elseif ($password != $confirmPassword) {
+			$msg = "<div class='alert alert-danger' role='alert'>Password does not match.</div>";
+			return $msg;
 		}else{
 
 			$query = "INSERT INTO users (fullname,email,password,confirmPassword) VALUES ('$fullname','$email','$password','$confirmPassword')";

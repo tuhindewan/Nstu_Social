@@ -3,6 +3,9 @@
 require_once 'lib/session.php';
 Session::checkSession();
 Session::init();
+require_once 'lib/database.php';
+$userId = Session::get("userid");
+$username = Session::get("fullname");
 ?> 
 
 <!DOCTYPE html>
@@ -53,7 +56,7 @@ Session::init();
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
-            <li class="actives"><a href="profile.html">Profile</a></li>
+            <li class="actives"><a href="profile.php"><strong><?php echo $username; ?></strong></a></li>
             <li><a href="home.html">Home</a></li>
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
@@ -64,7 +67,7 @@ Session::init();
                 <li><a href="#">Another action</a></li>
                 <li><a href="#">Something else here</a></li>
                 <li role="separator" class="divider"></li>
-                <li><a href="#">Separated link</a></li>
+                <li><a href="editProfile.php">Account Settings</a></li>
                 <li role="separator" class="divider"></li>
                 <?php 
                     if (isset($_GET['action']) && $_GET['action']=='logout') {

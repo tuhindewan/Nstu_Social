@@ -62,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['login'])) {
             <span class="icon-bar bar2"></span>
             <span class="icon-bar bar3"></span>
           </button>
-          <a class="navbar-brand" href="profile.html">NSTUSocial</a>
+          <a class="navbar-brand" href="index.php">NSTUSocial</a>
         </div>
       </div>
     </nav>
@@ -89,7 +89,7 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['login'])) {
                       </div>
                       <div class="form-group">
                         <input type="password" class="form-control" name="password" placeholder="Password">
-                        <a href="#" class="pull-xs-right">
+                        <a href="forgotPassword.php" class="pull-xs-right">
                           <small>Forgot?</small>
                         </a>
                         <div class="clearfix"></div>

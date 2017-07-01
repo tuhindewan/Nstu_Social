@@ -56,8 +56,8 @@ class UserLogin
 				if ($result!=false) {
 				$value = $result->fetch_assoc();
 				Session::set('userlogin',true);
-				Session::set('userid',$value['userId']);
-				Session::set('fullname',$value['fullname']);
+				Session::set('userid',$value['id']);
+				Session::set('fullname',$value['fullName']);
 				header("Location:profile.php");
 					}else{
 						$msg = "<div class='alert alert-danger' role='alert'>Something went wrong!!.</div>";
