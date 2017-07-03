@@ -1,3 +1,19 @@
+<?php
+
+require_once 'classes/ForgotPassword.php';
+$forgotpass = new ForgotPassword();
+require_once 'lib/session.php';
+$userId = Session::get('userid');
+
+?>
+<?php
+
+if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['reset'])) {
+  $email = $_POST['email'];
+  $getdata = $forgotpass->resetUserPassword($email);
+}
+
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -61,11 +77,14 @@
                     <div class="panel-body">
                       <div class="text-center">
                         <h3><i class="fa fa-lock fa-4x"></i></h3>
+                        <?php if (isset($getdata)) {
+                          echo $getdata;
+                        } ?>
                         <h2 class="text-center">Forgot Password?</h2>
                         <p>You can reset your password here.</p>
                         <div class="panel-body">
           
-                          <form action="" method="post">
+                          <form action="" method="POST">
                             <div class="form-group">
                               <div class="input-group">
                                 <span class="input-group-addon"><i class="glyphicon glyphicon-envelope color-blue"></i></span>

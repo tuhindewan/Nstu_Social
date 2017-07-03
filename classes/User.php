@@ -1,5 +1,6 @@
 <?php 
 require_once 'lib/session.php';
+Session::checkLogin();
 require_once 'lib/database.php';
 require_once 'helpers/format.php';
 ?>
