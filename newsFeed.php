@@ -1,17 +1,8 @@
 
-<?php 
-require_once 'lib/session.php';
-Session::checkSession();
-Session::init();
-require_once 'lib/database.php';
-$userId = Session::get("userid");
-$username = Session::get("fullname");
-?> 
-
 <!DOCTYPE html>
 <html lang="en">
   
-<!-- Mirrored from demos.bootdey.com/dayday/profile.html by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 08 May 2017 15:34:06 GMT -->
+<!-- Mirrored from demos.bootdey.com/dayday/home.html by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 08 May 2017 15:35:14 GMT -->
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -20,8 +11,8 @@ $username = Session::get("fullname");
     <meta name="description" content="">
     <meta name="keywords" content="">
     <meta name="author" content="">
-    <link rel="icon" href="img/nstu.png">
-    <title>NSTUSocial | <?php echo $username; ?></title>
+    <link rel="icon" href="img/favicon.png">
+    <title>Day-Day</title>
     <!-- Bootstrap core CSS -->
     <link href="bootstrap.3.3.6/css/bootstrap.min.css" rel="stylesheet">
     <link href="font-awesome.4.6.1/css/font-awesome.min.css" rel="stylesheet">
@@ -32,7 +23,6 @@ $username = Session::get("fullname");
     <link href="assets/css/buttons.css" rel="stylesheet">
     <script src="assets/js/jquery.1.11.1.min.js"></script>
     <script src="bootstrap.3.3.6/js/bootstrap.min.js"></script>
-    
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
@@ -52,232 +42,81 @@ $username = Session::get("fullname");
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="home.php"><b>NSTUSocial</b></a>
+          <a class="navbar-brand" href="index-2.html"><b>DayDay</b></a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
-            <li class="actives"><a href="profile.php"><strong><?php echo $username; ?></strong></a></li>
-            <li><a href="newsFeed.php">Home</a></li>
+            <li class="actives"><a href="profile.php">Profile</a></li>
+            <li><a href="home.html">Home</a></li>
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                 Pages <span class="caret"></span>
               </a>
               <ul class="dropdown-menu">
-                <li><a href="#">Action</a></li>
-                <li><a href="#">Another action</a></li>
-                <li><a href="#">Something else here</a></li>
-                <li role="separator" class="divider"></li>
-                <li><a href="editProfile.php">Account Settings</a></li>
-                <li role="separator" class="divider"></li>
-                <?php 
-                    if (isset($_GET['action']) && $_GET['action']=='logout') {
-                       session_destroy();
-                    }
-                 ?>
-                <li><a href="?action=logout">Logout</a></li>
+                <li><a href="profile2.html">Profile 2</a></li>
+                <li><a href="profile3.html">Profile 3</a></li>
+                <li><a href="profile4.html">Profile 4</a></li>
+                <li><a href="sidebar_profile.html">Sidebar profile</a></li>
+                <li><a href="user_detail.html">User detail</a></li>
+                <li><a href="edit_profile.html">Edit profile</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="friends.html">Friends</a></li>
               </ul>
             </li>
-            <li><a href="#" class="nav-controller"><i class="fa fa-user"></i></a></li>
           </ul>
         </div>
       </div>
     </nav>
 
     <!-- Begin page content -->
-    <div class="row page-content">
-    <div class="col-md-8 col-md-offset-2">
+    <div class="container page-content ">
       <div class="row">
-        <div class="col-md-12">
-          <div class="cover profile">
-              <div class="wrapper">
-                <img width="888px" src="img/Cover/profile-cover.jpg" class="show-in-modal" alt="people">
-              </div>
-            <div class="cover-info">
-              <div class="avatar">
-                <img src="img/Friends/guy-3.jpg" alt="people">
-              </div>
-              <div class="name"><a href="#">John Breakgrow jr.</a></div>
-              <ul class="cover-nav">
-                <li class="active"><a href="profile.html"><i class="fa fa-fw fa-bars"></i> Timeline</a></li>
-                <li><a href="about.html"><i class="fa fa-fw fa-user"></i> About</a></li>
-                <li><a href="friends.html"><i class="fa fa-fw fa-users"></i> Friends</a></li>
-                <li><a href="photos1.html"><i class="fa fa-fw fa-image"></i> Photos</a></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-5">
-          <div class="widget">
-            <div class="widget-header">
-              <h3 class="widget-caption">About</h3>
-            </div>
-            <div class="widget-body bordered-top bordered-sky">
-              <ul class="list-unstyled profile-about margin-none">
-                <li class="padding-v-5">
-                  <div class="row">
-                    <div class="col-sm-4"><span class="text-muted">Date of Birth</span></div>
-                    <div class="col-sm-8">12 January 1990</div>
-                  </div>
-                </li>
-                <li class="padding-v-5">
-                  <div class="row">
-                    <div class="col-sm-4"><span class="text-muted">Job</span></div>
-                    <div class="col-sm-8">Ninja developer</div>
-                  </div>
-                </li>
-                <li class="padding-v-5">
-                  <div class="row">
-                    <div class="col-sm-4"><span class="text-muted">Gender</span></div>
-                    <div class="col-sm-8">Male</div>
-                  </div>
-                </li>
-                <li class="padding-v-5">
-                  <div class="row">
-                    <div class="col-sm-4"><span class="text-muted">Lives in</span></div>
-                    <div class="col-sm-8">Miami, FL, USA</div>
-                  </div>
-                </li>
-                <li class="padding-v-5">
-                  <div class="row">
-                    <div class="col-sm-4"><span class="text-muted">Credits</span></div>
-                    <div class="col-sm-8">249</div>
-                  </div>
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          <div class="widget widget-friends">
-            <div class="widget-header">
-              <h3 class="widget-caption">Friends</h3>
-            </div>
-            <div class="widget-body bordered-top  bordered-sky">
-              <div class="row">
-                <div class="col-md-12">
-                  <ul class="img-grid" style="margin: 0 auto;">
-                    <li>
-                      <a href="#">
-                        <img src="img/Friends/guy-6.jpg" alt="image">
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#">
-                        <img src="img/Friends/woman-3.jpg" alt="image">
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#">
-                        <img src="img/Friends/guy-2.jpg" alt="image">
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#">
-                        <img src="img/Friends/guy-9.jpg" alt="image">
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#">
-                        <img src="img/Friends/woman-9.jpg" alt="image">
-                      </a>
-                    </li>
-                    <li class="clearfix">
-                      <a href="#">
-                        <img src="img/Friends/guy-4.jpg" alt="image">
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#">
-                        <img src="img/Friends/guy-1.jpg" alt="image">
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#">
-                        <img src="img/Friends/woman-4.jpg" alt="image">
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#">
-                        <img src="img/Friends/guy-6.jpg" alt="image">
-                      </a>
-                    </li>
-                  </ul>
+        <!-- left links -->
+        <div class="col-md-3">
+          <div class="profile-nav">
+            <div class="widget">
+              <div class="widget-body">
+                <div class="user-heading round">
+                  <a href="#">
+                      <img src="img/Friends/guy-3.jpg" alt="">
+                  </a>
+                  <h1>John Breakgrow</h1>
+                  <p>@username</p>
                 </div>
+
+                <ul class="nav nav-pills nav-stacked">
+                  <li class="active"><a href="#"> <i class="fa fa-user"></i> News feed</a></li>
+                  <li>
+                    <a href="#"> 
+                      <i class="fa fa-envelope"></i> Messages 
+                      <span class="label label-info pull-right r-activity">9</span>
+                    </a>
+                  </li>
+                  <li><a href="#"> <i class="fa fa-calendar"></i> Events</a></li>
+                  <li><a href="#"> <i class="fa fa-image"></i> Photos</a></li>
+                  <li><a href="#"> <i class="fa fa-share"></i> Browse</a></li>
+                  <li><a href="#"> <i class="fa fa-floppy-o"></i> Saved</a></li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="widget">
+              <div class="widget-body">
+                <ul class="nav nav-pills nav-stacked">
+                  <li><a href="#"> <i class="fa fa-globe"></i> Pages</a></li>
+                  <li><a href="#"> <i class="fa fa-gamepad"></i> Games</a></li>
+                  <li><a href="#"> <i class="fa fa-puzzle-piece"></i> Ads</a></li>
+                  <li><a href="#"> <i class="fa fa-home"></i> Markerplace</a></li>
+                  <li><a href="#"> <i class="fa fa-users"></i> Groups</a></li>
+                </ul>
               </div>
             </div>
           </div>
-
-          <div class="widget">
-            <div class="widget-header">
-              <h3 class="widget-caption">Groups</h3>
-            </div>
-            <div class="widget-body bordered-top bordered-sky">
-              <div class="card">
-                <div class="content">
-                  <ul class="list-unstyled team-members">
-                    <li>
-                      <div class="row">
-                          <div class="col-xs-3">
-                              <div class="avatar">
-                                  <img src="img/Likes/likes-1.png" alt="Circle Image" class="img-circle img-no-padding img-responsive">
-                              </div>
-                          </div>
-                          <div class="col-xs-6">
-                             Github
-                          </div>
-              
-                          <div class="col-xs-3 text-right">
-                              <btn class="btn btn-sm btn-azure btn-icon"><i class="fa fa-user"></i></btn>
-                          </div>
-                      </div>
-                    </li>
-                    <li>
-                      <div class="row">
-                          <div class="col-xs-3">
-                              <div class="avatar">
-                                  <img src="img/Likes/likes-3.png" alt="Circle Image" class="img-circle img-no-padding img-responsive">
-                              </div>
-                          </div>
-                          <div class="col-xs-6">
-                              Css snippets
-                          </div>
-              
-                          <div class="col-xs-3 text-right">
-                              <btn class="btn btn-sm btn-azure btn-icon"><i class="fa fa-user"></i></btn>
-                          </div>
-                      </div>
-                    </li>
-                    <li>
-                      <div class="row">
-                          <div class="col-xs-3">
-                              <div class="avatar">
-                                  <img src="img/Likes/likes-2.png" alt="Circle Image" class="img-circle img-no-padding img-responsive">
-                              </div>
-                          </div>
-                          <div class="col-xs-6">
-                              Html Action
-                          </div>
-              
-                          <div class="col-xs-3 text-right">
-                              <btn class="btn btn-sm btn-azure btn-icon"><i class="fa fa-user"></i></btn>
-                          </div>
-                      </div>
-                    </li>
-                  </ul>
-                </div>
-              </div>  
-            </div>
-          </div>
-        </div>
+        </div><!-- end left links -->
 
 
-
-
-
-
-        <!--============= timeline posts-->
-        <div class="col-md-7">
+        <!-- center posts -->
+        <div class="col-md-6">
           <div class="row">
             <!-- left posts-->
             <div class="col-md-12">
@@ -360,6 +199,12 @@ $username = Session::get("fullname");
                         <span class="username"><a href="#">Jonathan Burke Jr.</a></span>
                         <span class="description">Shared publicly - 7:30 PM Today</span>
                       </div>
+                      <div class="box-tools">
+                      <button type="button" class="btn btn-box-tool" data-toggle="tooltip" title="" data-original-title="Mark as read">
+                        <i class="fa fa-circle-o"></i></button>
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                        <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                      </div>
                     </div>
                     <div class="box-body">
                       <p>Far far away, behind the word mountains, far from the
@@ -373,7 +218,7 @@ $username = Session::get("fullname");
                       your mouth.</p>
 
                       <div class="attachment-block clearfix">
-                        <img class="attachment-img show-in-modal" src="img/Photos/2.jpg" alt="Attachment Image">
+                        <img class="attachment-img" src="img/Photos/2.jpg" alt="Attachment Image">
                         <div class="attachment-pushed">
                         <h4 class="attachment-heading"><a href="http://www.bootdey.com/">Lorem ipsum text generator</a></h4>
                         <div class="attachment-text">
@@ -485,7 +330,7 @@ $username = Session::get("fullname");
                     </div>
 
                     <div class="box-body" style="display: block;">
-                      <img class="img-responsive pad show-in-modal" src="img/Photos/3.jpg" alt="Photo">
+                      <img class="img-responsive pad" src="img/Photos/3.jpg" alt="Photo">
                       <p>I took this photo this morning. What do you guys think?</p>
                       <button type="button" class="btn btn-default btn-xs"><i class="fa fa-share"></i> Share</button>
                       <button type="button" class="btn btn-default btn-xs"><i class="fa fa-thumbs-o-up"></i> Like</button>
@@ -529,39 +374,156 @@ $username = Session::get("fullname");
               </div>
             </div><!-- end left posts-->
           </div>
-        </div><!-- end timeline posts-->
-      </div>
-    </div>
-    </div>
+        </div><!-- end  center posts -->
 
 
-    <!-- Online users sidebar content-->
-    <div class="chat-sidebar focus">
-      <div class="list-group text-left">
-        <p class="text-center visible-xs"><a href="#" class="hide-chat btn btn-success">Hide</a></p> 
-        <p class="text-center chat-title">Online users</p>  
-        <a href="messages1.html" class="list-group-item">
-          <i class="fa fa-check-circle connected-status"></i>
-          <img src="img/Friends/guy-2.jpg" class="img-chat img-thumbnail">
-          <span class="chat-user-name">Jeferh Smith</span>
-        </a>
-        <a href="messages1.html" class="list-group-item">
-          <i class="fa fa-times-circle absent-status"></i>
-          <img src="img/Friends/woman-1.jpg" class="img-chat img-thumbnail">
-          <span class="chat-user-name">Dapibus acatar</span>
-        </a>
-        <a href="messages1.html" class="list-group-item">
-          <i class="fa fa-check-circle connected-status"></i>
-          <img src="img/Friends/guy-3.jpg" class="img-chat img-thumbnail">
-          <span class="chat-user-name">Antony andrew lobghi</span>
-        </a>
+
+
+        <!-- right posts -->
+        <div class="col-md-3">
+          <!-- People You May Know -->
+          <div class="widget">
+            <div class="widget-header">
+              <h3 class="widget-caption">People You May Know</h3>
+            </div>
+            <div class="widget-body bordered-top bordered-sky">
+              <div class="card">
+                  <div class="content">
+                      <ul class="list-unstyled team-members">
+                          <li>
+                              <div class="row">
+                                  <div class="col-xs-3">
+                                      <div class="avatar">
+                                          <img src="img/Friends/guy-2.jpg" alt="Circle Image" class="img-circle img-no-padding img-responsive">
+                                      </div>
+                                  </div>
+                                  <div class="col-xs-6">
+                                     Carlos marthur
+                                  </div>
+                      
+                                  <div class="col-xs-3 text-right">
+                                      <btn class="btn btn-sm btn-azure btn-icon"><i class="fa fa-user-plus"></i></btn>
+                                  </div>
+                              </div>
+                          </li>
+                          <li>
+                              <div class="row">
+                                  <div class="col-xs-3">
+                                      <div class="avatar">
+                                          <img src="img/Friends/woman-1.jpg" alt="Circle Image" class="img-circle img-no-padding img-responsive">
+                                      </div>
+                                  </div>
+                                  <div class="col-xs-6">
+                                      Maria gustami
+                                  </div>
+                      
+                                  <div class="col-xs-3 text-right">
+                                      <btn class="btn btn-sm btn-azure btn-icon"><i class="fa fa-user-plus"></i></btn>
+                                  </div>
+                              </div>
+                          </li>
+                          <li>
+                              <div class="row">
+                                  <div class="col-xs-3">
+                                      <div class="avatar">
+                                          <img src="img/Friends/woman-2.jpg" alt="Circle Image" class="img-circle img-no-padding img-responsive">
+                                      </div>
+                                  </div>
+                                  <div class="col-xs-6">
+                                      Angellina mcblown
+                                  </div>
+                      
+                                  <div class="col-xs-3 text-right">
+                                      <btn class="btn btn-sm btn-azure btn-icon"><i class="fa fa-user-plus"></i></btn>
+                                  </div>
+                              </div>
+                          </li>
+                      </ul>
+                  </div>
+              </div>
+              <a href="usersList.php">View all&nbsp <i class="fa fa-share-square-o"></i></a>          
+            </div>
+          </div><!-- End people yout may know --> 
+
+                    <!-- Friends activity -->
+          <div class="widget">
+            <div class="widget-header">
+              <h3 class="widget-caption">Friends activity</h3>
+            </div>
+            <div class="widget-body bordered-top bordered-sky">
+              <div class="card">
+                <div class="content">
+                   <ul class="list-unstyled team-members">
+                    <li>
+                      <div class="row">
+                        <div class="col-xs-3">
+                          <div class="avatar">
+                              <img src="img/Friends/woman-2.jpg" alt="img" class="img-circle img-no-padding img-responsive">
+                          </div>
+                        </div>
+                        <div class="col-xs-9">
+                          <b><a href="#">Hillary Markston</a></b> shared a 
+                          <b><a href="#">publication</a></b>. 
+                          <span class="timeago" >5 min ago</span>
+                        </div>
+                      </div>
+                    </li>
+                    <li>
+                      <div class="row">
+                        <div class="col-xs-3">
+                          <div class="avatar">
+                              <img src="img/Friends/woman-3.jpg" alt="Circle Image" class="img-circle img-no-padding img-responsive">
+                          </div>
+                        </div>
+                        <div class="col-xs-9">
+                          <b><a href="#">Leidy marshel</a></b> shared a 
+                          <b><a href="#">publication</a></b>. 
+                          <span class="timeago" >5 min ago</span>
+                        </div>
+                      </div>
+                    </li>
+                    <li>
+                      <div class="row">
+                        <div class="col-xs-3">
+                          <div class="avatar">
+                              <img src="img/Friends/woman-4.jpg" alt="Circle Image" class="img-circle img-no-padding img-responsive">
+                          </div>
+                        </div>
+                        <div class="col-xs-9">
+                          <b><a href="#">Presilla bo</a></b> shared a 
+                          <b><a href="#">publication</a></b>. 
+                          <span class="timeago" >5 min ago</span>
+                        </div>
+                      </div>
+                    </li>
+                    <li>
+                      <div class="row">
+                        <div class="col-xs-3">
+                            <div class="avatar">
+                                <img src="img/Friends/woman-4.jpg" alt="Circle Image" class="img-circle img-no-padding img-responsive">
+                            </div>
+                        </div>
+                        <div class="col-xs-9">
+                          <b><a href="#">Martha markguy</a></b> shared a 
+                          <b><a href="#">publication</a></b>. 
+                          <span class="timeago" >5 min ago</span>
+                        </div>
+                      </div>
+                    </li>
+                  </ul>         
+                </div>
+              </div>
+            </div>
+          </div><!-- End Friends activity -->
+
+        </div><!-- end right posts -->
       </div>
-    </div><!-- Online users sidebar content-->
+    </div>
 
     <footer class="footer">
-        <div class="container">
-          <p class="text-muted"> Copyright &copy; Dept. of CSTE,NSTU - All rights reserved </p>
-        </div>
+      <div class="container">
+        <p class="text-muted"> Copyright &copy; Company - All rights reserved </p>
+      </div>
     </footer>
       <script type="text/javascript">
           (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -576,5 +538,5 @@ $username = Session::get("fullname");
       </script>
   </body>
 
-<!-- Mirrored from demos.bootdey.com/dayday/profile.html by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 08 May 2017 15:35:14 GMT -->
+<!-- Mirrored from demos.bootdey.com/dayday/home.html by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 08 May 2017 15:35:14 GMT -->
 </html>
