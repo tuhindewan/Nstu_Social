@@ -56,8 +56,8 @@ $db = new Database();
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
-            <li class="actives"><a href="profile.html">Profile</a></li>
-            <li><a href="home.html">Home</a></li>
+            <li class="actives"><a href="profile.php">Profile</a></li>
+            <li><a href="newsFeed.php">Home</a></li>
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                 Pages <span class="caret"></span>
@@ -123,7 +123,7 @@ if ($result) {
                 </div>
               </div>
               <div class="panel-footer">
-                <a href="#" class="btn btn-azure btn-sm">Follow <i class="fa fa-share"></i></a>
+                <button type="submit" class="btn btn-azure btn-sm" name="follow"><i class="fa fa-user-plus"></i> Follow</button>
               </div>
             </div>
           </div>
