@@ -32,10 +32,9 @@ class Post
 		$result= $this->db->select($query);
 		return $result;
 	}
-
-	public function getAllPost(){
-		$query = "SELECT * FROM posts ORDER BY id DESC";
-		$result= $this->db->select($query);
+	public function getFollowingData($userId){
+		$query = "SELECT posts.body,posts.id,posts.likes,posts.posted_at,users.fullName FROM users,posts,followers WHERE posts.user_id = followers.user_id AND users.id = posts.user_id AND follower_id='$userId' ORDER BY posts.posted_at DESC";
+		$result = $this->db->select($query);
 		return $result;
 	}
 

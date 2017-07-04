@@ -17,6 +17,25 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['post'])) {
 }
 
 ?>
+<?php 
+
+if (isset($_GET['postId'])) {
+  $postId = $_GET['postId'];
+  $query = "SELECT user_id FROM post_likes WHERE post_id='$postId' AND user_id = '$userId'";
+  $result = $db->select($query);
+  if ($result==false) {
+    $query = "UPDATE posts SET likes=likes+1 WHERE id = '$postId'";
+    $result = $db->update($query);
+    $query = "INSERT INTO post_likes (post_id,user_id) VALUES ('$postId','$userId')";
+    $result = $db->insert($query);
+  }else{
+    $query = "UPDATE posts SET likes=likes-1 WHERE id = '$postId'";
+    $result = $db->update($query);
+    $query = "DELETE FROM post_likes WHERE post_id = '$postId' AND user_id = '$userId'";
+    $result = $db->delete($query);
+  } 
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
   
@@ -161,11 +180,12 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['post'])) {
                   <!-- end post state form -->
 
                   <!--  posts -->
-                   <?php
-                  $getVal = $post->getAllPost();
+                  <?php 
+
+                  $getVal = $post->getFollowingData($userId);
                   if ($getVal) {
                     while ($value=$getVal->fetch_assoc()) {
-                      $postId = $value["id"];
+                     $postId = $value["id"];
 
                       $query = "SELECT post_id FROM post_likes WHERE user_id = '$userId' AND post_id = '$postId'";
                       $like_result = $db->select($query);
