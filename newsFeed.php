@@ -36,6 +36,13 @@ if (isset($_GET['postId'])) {
   } 
 }
 ?>
+<?php 
+require_once 'classes/Comment.php';
+$cmnt = new Comment();
+if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['submit_comm']) ) {
+  $getComment = $cmnt->createComment($_POST['commentbody'],$_GET['postId2'],$userId);
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
   
@@ -59,6 +66,7 @@ if (isset($_GET['postId'])) {
     <link href="assets/css/forms.css" rel="stylesheet">
     <link href="assets/css/buttons.css" rel="stylesheet">
     <script src="assets/js/jquery.1.11.1.min.js"></script>
+    <script src="assets/js/main.js"></script>
     <script src="bootstrap.3.3.6/js/bootstrap.min.js"></script>
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -209,39 +217,42 @@ if (isset($_GET['postId'])) {
                       </form>
                       <span class="pull-right text-muted"><?php echo $value["likes"]; ?> likes - 3 comments</span>
                     </div>
-                    <div class="box-footer box-comments" style="display: block;">
-                      <div class="box-comment">
-                        <img class="img-circle img-sm" src="img/Friends/guy-2.jpg" alt="User Image">
-                        <div class="comment-text">
-                          <span class="username">
-                          Maria Gonzales
-                          <span class="text-muted pull-right">8:03 PM Today</span>
-                          </span>
-                          It is a long established fact that a reader will be distracted
-                          by the readable content of a page when looking at its layout.
-                        </div>
-                      </div>
+                    <?php 
 
+                    $getcmt = $cmnt->displayComments($postId);
+                      if ($getcmt) {
+                        while ($value=$getcmt->fetch_assoc()) {
+
+                     ?>
+                    <div class="box-footer box-comments" style="display: block;">
                       <div class="box-comment">
                         <img class="img-circle img-sm" src="img/Friends/guy-3.jpg" alt="User Image">
                         <div class="comment-text">
                           <span class="username">
-                          Luna Stark
-                          <span class="text-muted pull-right">8:03 PM Today</span>
+                          <?php echo $value['fullName']; ?>
+                          <span class="text-muted pull-right"><?php echo  date("M j, Y h:ia",strtotime($value['posted_at'])) ; ?></span>
                           </span>
-                          It is a long established fact that a reader will be distracted
-                          by the readable content of a page when looking at its layout.
+                          <?php echo $value['comment']; ?>
                         </div>
                       </div>
                     </div>
+                    <?php }} ?>
+                      <?php if (isset($getComment)) {
+                        echo $getComment;
+                      } ?>
+
+
                     <div class="box-footer" style="display: block;">
-                      <form action="#" method="post">
+                      <form action="newsFeed.php?postId2=<?php echo $value["id"]; ?>" method="POST" id="my_form">
                         <img class="img-responsive img-circle img-sm" src="img/Friends/guy-3.jpg" alt="Alt Text">
                         <div class="img-push">
-                          <input type="text" class="form-control input-sm" placeholder="Press enter to post comment">
+                          <input name="commentbody" id="comment" type="text" class="form-control input-sm" placeholder="Press enter to post comment">
+                          <input type="submit" name="submit_comm" style="position: absolute; left: -9999px; width: 1px; height: 1px;"tabindex="-1" />
                         </div>
                       </form>
                     </div>
+
+
                   </div>
                    <?php   }else{ ?>
                       <div class="box box-widget">
@@ -263,43 +274,47 @@ if (isset($_GET['postId'])) {
                       </form>
                       <span class="pull-right text-muted"><?php echo $value["likes"]; ?> likes - 3 comments</span>
                     </div>
+
+                    <?php 
+
+                    $getcmt = $cmnt->displayComments($postId);
+                      if ($getcmt) {
+                        while ($value=$getcmt->fetch_assoc()) {
+                      
+
+                     ?>
                     <div class="box-footer box-comments" style="display: block;">
-                      <div class="box-comment">
-                        <img class="img-circle img-sm" src="img/Friends/guy-2.jpg" alt="User Image">
-                        <div class="comment-text">
-                          <span class="username">
-                          Maria Gonzales
-                          <span class="text-muted pull-right">8:03 PM Today</span>
-                          </span>
-                          It is a long established fact that a reader will be distracted
-                          by the readable content of a page when looking at its layout.
-                        </div>
-                      </div>
 
                       <div class="box-comment">
                         <img class="img-circle img-sm" src="img/Friends/guy-3.jpg" alt="User Image">
                         <div class="comment-text">
                           <span class="username">
-                          Luna Stark
-                          <span class="text-muted pull-right">8:03 PM Today</span>
+                          <?php echo $value['fullName']; ?>
+                          <span class="text-muted pull-right"><?php echo  date("M j, Y h:ia",strtotime($value['posted_at'])) ; ?></span>
                           </span>
-                          It is a long established fact that a reader will be distracted
-                          by the readable content of a page when looking at its layout.
+                          <?php echo $value['comment']; ?>
                         </div>
                       </div>
+
+                        
                     </div>
+                    <?php }} ?>
+                      <?php if (isset($getComment)) {
+                        echo $getComment;
+                      } ?>
                     <div class="box-footer" style="display: block;">
-                      <form action="#" method="post">
+                      <form action="newsFeed.php?postId2=<?php echo $value["id"]; ?>" method="POST" id="my_form">
                         <img class="img-responsive img-circle img-sm" src="img/Friends/guy-3.jpg" alt="Alt Text">
                         <div class="img-push">
-                          <input type="text" class="form-control input-sm" placeholder="Press enter to post comment">
+                          <input name="commentbody" id="comment" type="text" class="form-control input-sm" placeholder="Press enter to post comment">
+                          <input type="submit" name="submit_comm" style="position: absolute; left: -9999px; width: 1px; height: 1px;"tabindex="-1" />
                         </div>
                       </form>
                     </div>
                   </div>
                  <?php } ?>
                   <!--  end posts -->
-                   <?php }} ?>
+                <?php }} ?>
                 </div>
               </div>
             </div><!-- end left posts-->

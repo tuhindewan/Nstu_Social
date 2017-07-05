@@ -1,7 +1,9 @@
 <?php 
 require_once 'lib/session.php';
+
 Session::checkSession();
 Session::init();
+$username = Session::get("fullname");
 ?>
 <?php 
 require_once 'classes/EditProfile.php';
@@ -101,6 +103,7 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['saveChanges'])) {
             echo $changePass;
           }
         ?>
+
             <!-- NAV TABS -->
           <ul class="nav nav-tabs nav-tabs-custom-colored tabs-iconized">
             <li class="active"><a href="#profile-tab" data-toggle="tab" aria-expanded="true"><i class="fa fa-user"></i> Profile</a></li>
@@ -110,17 +113,49 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['saveChanges'])) {
           <!-- END NAV TABS -->
           <div class="tab-content profile-page">
             <!-- PROFILE TAB CONTENT -->
+            <?php
+              if (isset($_POST['uploadAvatar'])) {
+                     $changeAvatar =  $edt->changeAvatar($_FILES,$userId);
+              }
+              ?>
+
+              <?php 
+
+          if (isset($changeAvatar)) {
+            echo $changeAvatar;
+          }
+         ?>
+
+         
             <div class="tab-pane profile active" id="profile-tab">
               <div class="row">
                 <div class="col-md-3">
                   <div class="user-info-left">
-                    <img src="img/Friends/guy-3.jpg" alt="Profile Picture">
-                    <h2>John Breakgrow jr.        <?php echo $userId; ?></h2>
+                  <?php
+                   $getProImage = $edt->getProfileImage($userId);
+                   if ($getProImage) {
+                     while ($proImage = $getProImage->fetch_assoc()) {
+
+                   ?>
+                   <?php 
+
+                    if ($proImage['avatar']) { ?>
+                      <img src="<?php echo $proImage['avatar']; ?>" width="114px" height="114px" alt="Profile Picture">
+                   <?php }else{ ?>
+                          <img src="img/nophoto.jpg" width="114px" height="114px" alt="Profile Picture">
+                <?php }  ?>
+                    
+                    <?php }} ?>
+                    <h2><?php echo $username; ?></h2>
                     <div class="contact">
                       <p>
-                        <span class="file-input btn btn-azure btn-file">
-                          Change Avatar <input type="file" multiple="">
+                        <form action="editProfile.php" method="POST" enctype="multipart/form-data">
+                          <span class="file-input btn btn-azure btn-file">
+                          Choose Avatar <input type="file" multiple="" name="avatar">
+
                         </span>
+                        <input type="submit" class="btn btn-success" value="Upload" name="uploadAvatar" >
+                        </form>
                       </p>
                       <p>
                         <span class="file-input btn btn-azure btn-file">

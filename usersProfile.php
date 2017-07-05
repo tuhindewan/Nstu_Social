@@ -82,7 +82,7 @@ $username = Session::get("fullname");
     </nav>
 
   <?php if ($userId==$followerId) { 
-header("Location:error404.php");
+      header("Location:error404.php");
     ?>
   <?php }else{ ?>
 <!-- Begin page content -->

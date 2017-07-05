@@ -11,6 +11,8 @@ $username = Session::get("fullname");
 <?php
 require_once 'classes/Post.php';
 $post = new Post();
+require_once 'classes/EditProfile.php';
+$edt = new EditProfile();
 ?>
 <?php
 if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['post'])) {
@@ -34,6 +36,13 @@ if (isset($_GET['postId'])) {
     $query = "DELETE FROM post_likes WHERE post_id = '$postId' AND user_id = '$userId'";
     $result = $db->delete($query);
   } 
+}
+?>
+<?php 
+require_once 'classes/Comment.php';
+$cmnt = new Comment();
+if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['submit_comm']) ) {
+  $getComment = $cmnt->createComment($_POST['commentbody'],$_GET['postId'],$userId);
 }
 ?>
 
@@ -122,10 +131,25 @@ if (isset($_GET['postId'])) {
                 <img width="888px" src="img/Cover/profile-cover.jpg" class="show-in-modal" alt="people">
               </div>
             <div class="cover-info">
-              <div class="avatar">
-                <img src="img/Friends/guy-3.jpg" alt="people">
+            <?php
+             $getProImage = $edt->getProfileImage($userId);
+             if ($getProImage) {
+               while ($proImage = $getProImage->fetch_assoc()) {
+
+             ?>
+             <?php 
+             if ($proImage['avatar']) { ?>
+               <div class="avatar">
+                <img src="<?php echo $proImage['avatar']; ?>" width="114px" height="114px" alt="Upload An Image ">
               </div>
-              <div class="name"><a href="#">John Breakgrow jr.</a></div>
+           <?php  } else{ ?>
+                      <div class="avatar">
+                      <img src="img/nophoto.jpg" width="114px" height="114px" alt="Upload An Image ">
+                    </div>
+            <?php }  ?>
+              
+              <?php }} ?>
+              <div class="name"><a href="#"><?php echo $username ?></a></div>
               <ul class="cover-nav">
                 <li class="active"><a href="profile.html"><i class="fa fa-fw fa-bars"></i> Timeline</a></li>
                 <li><a href="about.html"><i class="fa fa-fw fa-user"></i> About</a></li>
@@ -360,36 +384,35 @@ if (isset($_GET['postId'])) {
                       </form>
                       <span class="pull-right text-muted"><?php echo $value["likes"]; ?> likes - 3 comments</span>
                     </div>
-                    <div class="box-footer box-comments" style="display: block;">
-                      <div class="box-comment">
-                        <img class="img-circle img-sm" src="img/Friends/guy-2.jpg" alt="User Image">
-                        <div class="comment-text">
-                          <span class="username">
-                          Maria Gonzales
-                          <span class="text-muted pull-right">8:03 PM Today</span>
-                          </span>
-                          It is a long established fact that a reader will be distracted
-                          by the readable content of a page when looking at its layout.
-                        </div>
-                      </div>
+                    <?php 
 
+                    $getcmt = $cmnt->displayComments($postId);
+                      if ($getcmt) {
+                        while ($value=$getcmt->fetch_assoc()) {
+
+                     ?>
+                    <div class="box-footer box-comments" style="display: block;">
                       <div class="box-comment">
                         <img class="img-circle img-sm" src="img/Friends/guy-3.jpg" alt="User Image">
                         <div class="comment-text">
                           <span class="username">
-                          Luna Stark
-                          <span class="text-muted pull-right">8:03 PM Today</span>
+                          <?php echo $value['fullName']; ?>
+                          <span class="text-muted pull-right"><?php echo  date("M j, Y h:ia",strtotime($value['posted_at'])) ; ?></span>
                           </span>
-                          It is a long established fact that a reader will be distracted
-                          by the readable content of a page when looking at its layout.
+                          <?php echo $value['comment']; ?>
                         </div>
                       </div>
                     </div>
+                    <?php }} ?>
+                      <?php if (isset($getComment)) {
+                        echo $getComment;
+                      } ?>
                     <div class="box-footer" style="display: block;">
-                      <form action="#" method="post">
+                      <form action="newsFeed.php?postId=<?php echo $value["id"]; ?>" method="POST" id="my_form">
                         <img class="img-responsive img-circle img-sm" src="img/Friends/guy-3.jpg" alt="Alt Text">
                         <div class="img-push">
-                          <input type="text" class="form-control input-sm" placeholder="Press enter to post comment">
+                          <input name="commentbody" id="comment" type="text" class="form-control input-sm" placeholder="Press enter to post comment">
+                          <input type="submit" name="submit_comm" style="position: absolute; left: -9999px; width: 1px; height: 1px;"tabindex="-1" />
                         </div>
                       </form>
                     </div>
@@ -414,36 +437,39 @@ if (isset($_GET['postId'])) {
                       </form>
                       <span class="pull-right text-muted"><?php echo $value["likes"]; ?> likes - 3 comments</span>
                     </div>
+                    <?php 
+
+                    $getcmt = $cmnt->displayComments($postId);
+                      if ($getcmt) {
+                        while ($value=$getcmt->fetch_assoc()) {
+                      
+
+                     ?>
                     <div class="box-footer box-comments" style="display: block;">
-                      <div class="box-comment">
-                        <img class="img-circle img-sm" src="img/Friends/guy-2.jpg" alt="User Image">
-                        <div class="comment-text">
-                          <span class="username">
-                          Maria Gonzales
-                          <span class="text-muted pull-right">8:03 PM Today</span>
-                          </span>
-                          It is a long established fact that a reader will be distracted
-                          by the readable content of a page when looking at its layout.
-                        </div>
-                      </div>
 
                       <div class="box-comment">
                         <img class="img-circle img-sm" src="img/Friends/guy-3.jpg" alt="User Image">
                         <div class="comment-text">
                           <span class="username">
-                          Luna Stark
-                          <span class="text-muted pull-right">8:03 PM Today</span>
+                          <?php echo $value['fullName']; ?>
+                          <span class="text-muted pull-right"><?php echo  date("M j, Y h:ia",strtotime($value['posted_at'])) ; ?></span>
                           </span>
-                          It is a long established fact that a reader will be distracted
-                          by the readable content of a page when looking at its layout.
+                          <?php echo $value['comment']; ?>
                         </div>
                       </div>
+
+                        
                     </div>
+                    <?php }} ?>
+                      <?php if (isset($getComment)) {
+                        echo $getComment;
+                      } ?>
                     <div class="box-footer" style="display: block;">
-                      <form action="#" method="post">
+                      <form action="newsFeed.php?postId=<?php echo $value["id"]; ?>" method="POST" id="my_form">
                         <img class="img-responsive img-circle img-sm" src="img/Friends/guy-3.jpg" alt="Alt Text">
                         <div class="img-push">
-                          <input type="text" class="form-control input-sm" placeholder="Press enter to post comment">
+                          <input name="commentbody" id="comment" type="text" class="form-control input-sm" placeholder="Press enter to post comment">
+                          <input type="submit" name="submit_comm" style="position: absolute; left: -9999px; width: 1px; height: 1px;"tabindex="-1" />
                         </div>
                       </form>
                     </div>
