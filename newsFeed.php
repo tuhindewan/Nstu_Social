@@ -40,7 +40,7 @@ if (isset($_GET['postId'])) {
 require_once 'classes/Comment.php';
 $cmnt = new Comment();
 if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['submit_comm']) ) {
-  $getComment = $cmnt->createComment($_POST['commentbody'],$_GET['postId2'],$userId);
+  $getComment = $cmnt->createFeedComment($_POST['commentbody'],$_GET['postId2'],$userId);
 }
 ?>
 <!DOCTYPE html>
@@ -201,8 +201,17 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['submit_comm']) ) {
                         <div class="box box-widget">
                     <div class="box-header with-border">
                       <div class="user-block">
-                        <img class="img-circle" src="img/Friends/guy-3.jpg" alt="User Image">
-                        <span class="username"><a href="#">John Breakgrow jr.</a></span>
+                      <?php 
+
+                      if ($value["avatar"]) { ?>
+                        <img class="img-circle" src="<?php echo $value["avatar"]; ?>" alt="User Image">
+                    <?php  }else{ ?>
+
+                      <img class="img-circle" src="img/nophoto.jpg" alt="User Image">
+                      <?php } ?>
+                        
+
+                        <span class="username"><a href="#"><?php echo $value["fullName"]; ?></a></span>
                         <span class="description">Shared publicly - <?php echo  date("M j, Y h:ia",strtotime($value['posted_at'])) ; ?></span>
                       </div>
                     </div>
@@ -211,6 +220,11 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['submit_comm']) ) {
                       <p>
                         <?php echo $value["body"]; ?>
                       </p>
+                      <?php
+
+                      if ($value["postImage"]) { ?>
+                        <img class="img-responsive show-in-modal" src="<?php echo $value["postImage"]; ?>" alt="Photo">
+                   <?php   } ?>
                       <button type="button" class="btn btn-default btn-xs"><i class="fa fa-share"></i> Share</button>
                       <form action="newsFeed.php?postId=<?php echo $value["id"]; ?>" method="POST">
                         <button type="submit" class="btn btn-default btn-xs" name="like"><i class="fa fa-thumbs-o-up"></i> Like</button>
@@ -219,7 +233,7 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['submit_comm']) ) {
                     </div>
                     <?php 
 
-                    $getcmt = $cmnt->displayComments($postId);
+                    $getcmt = $cmnt->displayFeedComments($postId);
                       if ($getcmt) {
                         while ($value=$getcmt->fetch_assoc()) {
 
@@ -258,8 +272,15 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['submit_comm']) ) {
                       <div class="box box-widget">
                     <div class="box-header with-border">
                       <div class="user-block">
-                        <img class="img-circle" src="img/Friends/guy-3.jpg" alt="User Image">
-                        <span class="username"><a href="#">John Breakgrow jr.</a></span>
+                        <?php 
+
+                      if ($value["avatar"]) { ?>
+                        <img class="img-circle" src="<?php echo $value["avatar"]; ?>" alt="User Image">
+                    <?php  }else{ ?>
+
+                      <img class="img-circle" src="img/nophoto.jpg" alt="User Image">
+                      <?php } ?>
+                        <span class="username"><a href="#"><?php echo $value["fullName"]; ?></a></span>
                         <span class="description">Shared publicly - <?php echo  date("M j, Y h:ia",strtotime($value['posted_at'])) ; ?></span>
                       </div>
                     </div>
@@ -268,6 +289,12 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['submit_comm']) ) {
                       <p>
                         <?php echo $value["body"]; ?>
                       </p>
+
+                      <?php
+
+                      if ($value["postImage"]) { ?>
+                        <img class="img-responsive show-in-modal" src="<?php echo $value["postImage"]; ?>" alt="Photo">
+                   <?php   } ?>
                       <button type="button" class="btn btn-default btn-xs"><i class="fa fa-share"></i> Share</button>
                       <form action="newsFeed.php?postId=<?php echo $value["id"]; ?>" method="POST">
                         <button type="submit" class="btn btn-default btn-xs" name="unlike"><i class="fa fa-thumbs-o-up"></i> unLike</button>

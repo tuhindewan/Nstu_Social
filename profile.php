@@ -444,7 +444,7 @@ function getTopics($text) {
                     <div class="box-header with-border">
                       <div class="user-block">
                         <img class="img-circle" src="img/Friends/guy-3.jpg" alt="User Image">
-                        <span class="username"><a href="#">John Breakgrow jr.</a></span>
+                        <span class="username"><a href="#"><?php echo $username ?></a></span>
                         <span class="description">Shared publicly - <?php echo  date("M j, Y h:ia",strtotime($value['posted_at'])) ; ?></span>
                       </div>
                     </div>
@@ -504,7 +504,7 @@ function getTopics($text) {
                     <div class="box-header with-border">
                       <div class="user-block">
                         <img class="img-circle" src="img/Friends/guy-3.jpg" alt="User Image">
-                        <span class="username"><a href="#">John Breakgrow jr.</a></span>
+                        <span class="username"><a href="#"><?php echo $username ?></a></span>
                         <span class="description">Shared publicly - <?php echo  date("M j, Y h:ia",strtotime($value['posted_at'])) ; ?></span>
                       </div>
                     </div>

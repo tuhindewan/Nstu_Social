@@ -34,7 +34,7 @@ class Post
 		return $result;
 	}
 	public function getFollowingData($userId){
-		$query = "SELECT posts.body,posts.id,posts.likes,posts.posted_at,users.fullName FROM users,posts,followers WHERE posts.user_id = followers.user_id AND users.id = posts.user_id AND follower_id='$userId' ORDER BY posts.posted_at DESC";
+		$query = "SELECT posts.body,posts.id,posts.likes,posts.posted_at,posts.postImage,users.fullName,users.avatar FROM users,posts,followers WHERE posts.user_id = followers.user_id AND users.id = posts.user_id AND follower_id='$userId' ORDER BY posts.posted_at DESC";
 		$result = $this->db->select($query);
 		return $result;
 	}
