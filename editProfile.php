@@ -152,7 +152,6 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['saveChanges'])) {
                         <form action="editProfile.php" method="POST" enctype="multipart/form-data">
                           <span class="file-input btn btn-azure btn-file">
                           Choose Avatar <input type="file" multiple="" name="avatar">
-
                         </span>
                         <input type="submit" class="btn btn-success" value="Upload" name="uploadAvatar" >
                         </form>

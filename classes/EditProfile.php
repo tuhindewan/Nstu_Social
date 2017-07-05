@@ -71,23 +71,10 @@ class EditProfile
           $imgurURL = "https://api.imgur.com/3/image";
           
 
-          if (empty($_FILES['avatar']['name'])) {
-                $msg = "<div class='alert alert-danger' role='alert'>Please choose an image first for your Avatar.</div>";
-				return $msg;
-        }
         if ($_FILES['avatar']['size'] > 10240000) {
                 $msg = "<div class='alert alert-danger' role='alert'>Image Size should be 10MB or less then 10MB!</div>";
 				return $msg;
         }
-
-        $permited  = array('jpg', 'jpeg', 'png', 'gif');
-        $div = explode('.', $_FILES['avatar']['name']);
-        $file_ext = strtolower(end($div));
-
-        if (in_array($file_ext, $permited) === false) {
-          $msg = "<div class='alert alert-danger' role='alert'>You can upload only JPG,JPEG,PNG or GIF file!</div>";
-				return $msg;
-          }
 
           $response = file_get_contents($imgurURL, false, $context);
           $response = json_decode($response);

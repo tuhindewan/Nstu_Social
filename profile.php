@@ -16,7 +16,18 @@ $edt = new EditProfile();
 ?>
 <?php
 if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['post'])) {
-  $getData = $post->UserSinglePost($_POST,$userId);
+  if ($_FILES['postImage']['size'] == 0) {
+    $getData = $post->UserSinglePost($_POST,$userId);
+  }else{
+    $ImgPostId = $post->createImagePost($_POST,$userId);
+    if ($ImgPostId) {
+      while ($value = $ImgPostId->fetch_assoc()) {
+        $postImgId = $value['id'];
+      }
+    }
+    $upPostImg = $post->uploadPostImage($_FILES,$postImgId,$userId);
+  }
+  
 }
 ?>
 <?php 
@@ -340,16 +351,19 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['submit_comm']) ) {
                 <?php if (isset($getData)) {
                   echo $getData;
                 } ?>
+
                   <div class="box profile-info n-border-top">
-                    <form action="" method="POST">
+                  <?php if (isset($upPostImg)) {
+                    echo $upPostImg;
+                  } ?>
+                    <form action="" method="POST" enctype="multipart/form-data">
                         <textarea class="form-control input-lg p-text-area" rows="2" placeholder="Whats in your mind today?" name="body"></textarea>
                         <div class="box-footer box-form">
-                        <button type="submit" class="btn btn-azure pull-right" name="post">Post</button>
                         <ul class="nav nav-pills">
-                            <li><a href="#"><i class="fa fa-map-marker"></i></a></li>
-                            <li><a href="#"><i class="fa fa-camera"></i></a></li>
-                            <li><a href="#"><i class=" fa fa-film"></i></a></li>
-                            <li><a href="#"><i class="fa fa-microphone"></i></a></li>
+                          <li>
+                          <span class="file-input btn btn-azure btn-file btn-sm"><i class="fa fa-camera"></i><input type="file" multiple="" name="postImage"></span>
+                          </li>
+                          <li class="pull-right"><button type="submit" class="btn btn-azure" name="post">Post</button></li>
                         </ul>
                     </div>
                     </form>
@@ -378,6 +392,13 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['submit_comm']) ) {
                       <p>
                         <?php echo $value["body"]; ?>
                       </p>
+                      <?php
+
+                      if ($value["postImage"]) { ?>
+                        <img class="img-responsive show-in-modal" src="<?php echo $value["postImage"]; ?>" alt="Photo">
+                   <?php   } ?>
+                      
+
                       <button type="button" class="btn btn-default btn-xs"><i class="fa fa-share"></i> Share</button>
                       <form action="profile.php?postId=<?php echo $value["id"]; ?>" method="POST">
                         <button type="submit" class="btn btn-default btn-xs" name="like"><i class="fa fa-thumbs-o-up"></i> Like</button>
@@ -408,7 +429,7 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['submit_comm']) ) {
                         echo $getComment;
                       } ?>
                     <div class="box-footer" style="display: block;">
-                      <form action="newsFeed.php?postId=<?php echo $value["id"]; ?>" method="POST" id="my_form">
+                      <form action="profile.php?postId=<?php echo $value["id"]; ?>" method="POST" id="my_form">
                         <img class="img-responsive img-circle img-sm" src="img/Friends/guy-3.jpg" alt="Alt Text">
                         <div class="img-push">
                           <input name="commentbody" id="comment" type="text" class="form-control input-sm" placeholder="Press enter to post comment">
@@ -431,6 +452,11 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['submit_comm']) ) {
                       <p>
                         <?php echo $value["body"]; ?>
                       </p>
+                      <?php
+
+                      if ($value["postImage"]) { ?>
+                        <img class="img-responsive show-in-modal" src="<?php echo $value["postImage"]; ?>" alt="Photo">
+                   <?php  } ?>
                       <button type="button" class="btn btn-default btn-xs"><i class="fa fa-share"></i> Share</button>
                       <form action="profile.php?postId=<?php echo $value["id"]; ?>" method="POST">
                         <button type="submit" class="btn btn-default btn-xs" name="unlike"><i class="fa fa-thumbs-o-up"></i> unLike</button>
@@ -465,7 +491,7 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['submit_comm']) ) {
                         echo $getComment;
                       } ?>
                     <div class="box-footer" style="display: block;">
-                      <form action="newsFeed.php?postId=<?php echo $value["id"]; ?>" method="POST" id="my_form">
+                      <form action="profile.php?postId=<?php echo $value["id"]; ?>" method="POST" id="my_form">
                         <img class="img-responsive img-circle img-sm" src="img/Friends/guy-3.jpg" alt="Alt Text">
                         <div class="img-push">
                           <input name="commentbody" id="comment" type="text" class="form-control input-sm" placeholder="Press enter to post comment">
