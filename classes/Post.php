@@ -16,14 +16,15 @@ class Post
 		$this->fm = new Format();
 	}
 
-	public function UserSinglePost($data,$id){
+	public function UserSinglePost($data,$id,$topics){
 		$body = $_POST['body'];
+		$body = trim($body);
 		if (empty($body)) {
-				$msg = "<div class='alert alert-danger' role='alert'>All fields are required.</div>";
+				$msg = "<div class='alert alert-danger' role='alert'>You cannot post an empty Field.</div>";
 				return $msg;
 			}
 
-		$query = "INSERT INTO posts (body,posted_at,user_id,likes) VALUES ('$body',NOW(),'$id',0)";
+		$query = "INSERT INTO posts (body,posted_at,user_id,likes,topics) VALUES ('$body',NOW(),'$id',0,'$topics')";
 		$result = $this->db->insert($query);
 	}
 
@@ -38,10 +39,10 @@ class Post
 		return $result;
 	}
 
-	public function createImagePost($data,$id){
+	public function createImagePost($data,$id,$topics){
 		$body = $_POST['body'];
 
-		$query = "INSERT INTO posts (body,posted_at,user_id,likes) VALUES ('$body',NOW(),'$id',0)";
+		$query = "INSERT INTO posts (body,posted_at,user_id,likes,topics) VALUES ('$body',NOW(),'$id',0,'$topics')";
 		$result = $this->db->insert($query);
 
 		$query = "SELECT id FROM posts WHERE user_id='$id' ORDER BY id DESC LIMIT 1";
@@ -87,6 +88,12 @@ class Post
      }
 
 
+	}
+
+	public function getPostTopics($topic){
+		$query = "SELECT topics FROM posts WHERE FIND_IN_SET('$topic', topics)";
+		$result = $this->db->select($query);
+		return $result;
 	}
 
 }

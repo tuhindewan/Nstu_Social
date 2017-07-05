@@ -17,9 +17,14 @@ $edt = new EditProfile();
 <?php
 if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['post'])) {
   if ($_FILES['postImage']['size'] == 0) {
-    $getData = $post->UserSinglePost($_POST,$userId);
+    $body =  $_POST['body'];
+    $topics = getTopics($body);
+    $getData = $post->UserSinglePost($_POST,$userId,$topics);
   }else{
-    $ImgPostId = $post->createImagePost($_POST,$userId);
+        $body =  $_POST['body'];
+        $topics = getTopics($body);
+    $ImgPostId = $post->createImagePost($_POST,$userId,$topics);
+
     if ($ImgPostId) {
       while ($value = $ImgPostId->fetch_assoc()) {
         $postImgId = $value['id'];
@@ -56,6 +61,48 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['submit_comm']) ) {
   $getComment = $cmnt->createComment($_POST['commentbody'],$_GET['postId'],$userId);
 }
 ?>
+
+<?php 
+function link_add($text) {
+$userId = Session::get("userid");
+$db = new Database();
+  $query = "SELECT id FROM users WHERE id != '$userId'";
+$result = $db->select($query);
+if ($result) {
+  while ($value = $result->fetch_assoc()) {
+    $profileId = $value['id'];
+            $text = explode(" ", $text);
+            $newstring = "";
+            foreach ($text as $word) {
+                    if (substr($word, 0, 1) == "@") {
+                            $newstring .= "<a href='usersProfile.php?userId=".$profileId."'>".htmlspecialchars($word)."</a> ";
+                    }else if (substr($word, 0, 1) == "#") {
+                                $newstring .= "<a href='topics.php?topic=".substr($word, 1)."'>".htmlspecialchars($word)."</a> ";
+                   } else {
+                            $newstring .= htmlspecialchars($word)." ";
+                    }
+            }
+            return $newstring;
+    }
+}
+
+}
+
+
+ ?>
+ <?php 
+function getTopics($text) {
+          $text = explode(" ", $text);
+          $topics = "";
+          foreach ($text as $word) {
+                  if (substr($word, 0, 1) == "#") {
+                          $topics .= substr($word, 1).",";
+                  }
+          }
+          return $topics;
+  }
+
+ ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -390,7 +437,7 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['submit_comm']) ) {
 
                     <div class="box-body" style="display: block;">
                       <p>
-                        <?php echo $value["body"]; ?>
+                        <?php echo link_add($value["body"]); ?>
                       </p>
                       <?php
 
@@ -450,7 +497,7 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['submit_comm']) ) {
 
                     <div class="box-body" style="display: block;">
                       <p>
-                        <?php echo $value["body"]; ?>
+                        <?php echo link_add($value["body"]); ?>
                       </p>
                       <?php
 
