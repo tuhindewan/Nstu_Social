@@ -126,6 +126,19 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['saveChanges'])) {
           }
          ?>
 
+         <?php
+              if (isset($_POST['uploadCover'])) {
+                     $changeCover =  $edt->changeCover($_FILES,$userId);
+              }
+              ?>
+
+               <?php 
+
+          if (isset($changeCover)) {
+            echo $changeCover;
+          }
+         ?>
+
          
             <div class="tab-pane profile active" id="profile-tab">
               <div class="row">
@@ -157,9 +170,12 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['saveChanges'])) {
                         </form>
                       </p>
                       <p>
-                        <span class="file-input btn btn-azure btn-file">
-                          Change Cover <input type="file" multiple="">
+                        <form action="editProfile.php" method="POST" enctype="multipart/form-data">
+                          <span class="file-input btn btn-azure btn-file">
+                          Choose Cover <input type="file" multiple="" name="cover">
                         </span>
+                        <input type="submit" class="btn btn-success" value="Upload" name="uploadCover" >
+                        </form>
                       </p>
                       <ul class="list-inline social">
                         <li><a href="#" title="Facebook"><i class="fa fa-facebook-square"></i></a></li>

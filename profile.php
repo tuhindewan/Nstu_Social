@@ -185,9 +185,23 @@ function getTopics($text) {
       <div class="row">
         <div class="col-md-12">
           <div class="cover profile">
-              <div class="wrapper">
-                <img width="888px" src="img/Cover/profile-cover.jpg" class="show-in-modal" alt="people">
+            <?php
+             $getCOImage = $edt->getCoverImage($userId);
+             if ($getCOImage) {
+               while ($coImage = $getCOImage->fetch_assoc()) {
+
+             ?>
+             <?php 
+             if ($coImage['cover']) { ?>
+               <div class="wrapper">
+                <img width="888px" height="250px" src="<?php echo $coImage['cover']; ?>" class="show-in-modal" alt="people">
               </div>
+             <?php  } else{ ?>
+              <div class="wrapper">
+                <img width="888px" height="250px" src="img/blank.jpg" class="show-in-modal" alt="people">
+              </div>
+              <?php }  ?>
+            <?php }} ?>
             <div class="cover-info">
             <?php
              $getProImage = $edt->getProfileImage($userId);

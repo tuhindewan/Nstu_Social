@@ -100,6 +100,49 @@ class EditProfile
 		return $result;
 	}
 
+	public function changeCover($file,$userId){
+		$permited  = array('jpg', 'jpeg', 'png', 'gif');
+      $file_name = $_FILES['cover']['name'];
+      $file_size = $_FILES['cover']['size'];
+      $file_temp = $_FILES['cover']['tmp_name'];
+
+
+      $div = explode('.', $file_name);
+      $file_ext = strtolower(end($div));
+      $unique_image = substr(md5(time()), 0, 10).'.'.$file_ext;
+      $uploaded_image = "CoverImages/".$unique_image;
+
+      if (empty($file_name)) {
+      		 $msg = "<div class='alert alert-danger' role='alert'>Please choose an image first for your Cover.</div>";
+				return $msg;;
+      }elseif ($file_size >10240000) {
+       		$msg = "<div class='alert alert-danger' role='alert'>Image Size should be 10MB or less then 10MB!</div>";
+				return $msg;
+      } elseif (in_array($file_ext, $permited) === false) {
+      		$msg = "<div class='alert alert-danger' role='alert'>You can upload only JPG,JPEG,PNG or GIF file!</div>";
+				return $msg;
+      } else{
+      move_uploaded_file($file_temp, $uploaded_image);
+      $query = "UPDATE users set cover = '$uploaded_image' WHERE id= '$userId'";
+      $update_rows = $this->db->update($query);
+      if ($update_rows) {
+       		$msg = "<div class='alert alert-success' role='alert'>You have successfully Changed Cover!!</div>";
+				return $msg;
+
+      }else {
+   			$msg = "<div class='alert alert-danger' role='alert'>Something Went wrong.Please choose image properly!!</div>";
+			return $msg;
+
+     }   
+     }
+	}
+
+	public function getCoverImage($userId){
+		$query = "SELECT cover FROM users WHERE id = '$userId'";
+		$result = $this->db->select($query);
+		return $result;
+	}
+
 }
 
 ?>
