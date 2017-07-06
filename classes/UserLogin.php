@@ -58,6 +58,7 @@ class UserLogin
 				Session::set('userlogin',true);
 				Session::set('userid',$value['id']);
 				Session::set('fullname',$value['fullName']);
+				Session::set('userName',$value['username']);
 				header("Location:profile.php");
 					}else{
 						$msg = "<div class='alert alert-danger' role='alert'>Something went wrong!!.</div>";

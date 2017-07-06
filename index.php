@@ -116,6 +116,9 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['login'])) {
                         <input type="text" class="form-control" name="fullname" placeholder="Full Name">
                       </div>
                       <div class="form-group">
+                        <input type="text" class="form-control" name="username" placeholder="Username">
+                      </div>
+                      <div class="form-group">
                         <input type="email" class="form-control" name="email" placeholder="Email">
                       </div>
                       <div class="form-group">

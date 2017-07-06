@@ -6,6 +6,7 @@ require_once 'lib/database.php';
 $db = new Database();
 $userId = Session::get("userid");
 $username = Session::get("fullname");
+$userName = Session::get("userName");
 ?>
 <?php
 require_once 'classes/Post.php';
@@ -125,8 +126,8 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['submit_comm']) ) {
                   <a href="#">
                       <img src="img/Friends/guy-3.jpg" alt="">
                   </a>
-                  <h1>John Breakgrow</h1>
-                  <p>@username</p>
+                  <h1><?php echo $username ?></h1>
+                  <p>@<?php echo $userName ?></p>
                 </div>
 
                 <ul class="nav nav-pills nav-stacked">

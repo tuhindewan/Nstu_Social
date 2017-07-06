@@ -66,27 +66,20 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['submit_comm']) ) {
 
 <?php 
 function link_add($text) {
-$userId = Session::get("userid");
-$db = new Database();
-  $query = "SELECT id FROM users WHERE id != '$userId'";
-$result = $db->select($query);
-if ($result) {
-  while ($value = $result->fetch_assoc()) {
-    $profileId = $value['id'];
-            $text = explode(" ", $text);
-            $newstring = "";
-            foreach ($text as $word) {
-                    if (substr($word, 0, 1) == "@") {
-                            $newstring .= "<a href='usersProfile.php?userId=".$profileId."'>".htmlspecialchars($word)."</a> ";
-                    }else if (substr($word, 0, 1) == "#") {
+$text = explode(" ", $text);
+                $newstring = "";
+
+                foreach ($text as $word) {
+                        if (substr($word, 0, 1) == "@") {
+                                $newstring .= "<a href='usersProfile.php?userName=".substr($word, 1)."'>".htmlspecialchars($word)."</a> ";
+                        } else if (substr($word, 0, 1) == "#") {
                                 $newstring .= "<a href='topics.php?topic=".substr($word, 1)."'>".htmlspecialchars($word)."</a> ";
-                   } else {
-                            $newstring .= htmlspecialchars($word)." ";
-                    }
-            }
-            return $newstring;
-    }
-}
+                        } else {
+                                $newstring .= htmlspecialchars($word)." ";
+                        }
+                }
+
+                return $newstring;
 
 }
 
@@ -156,6 +149,7 @@ function getTopics($text) {
           <ul class="nav navbar-nav navbar-right">
             <li class="actives"><a href="profile.php"><strong><?php echo $username; ?></strong></a></li>
             <li><a href="newsFeed.php">Home</a></li>
+            <li><a href="notify.php"><i class="fa fa-globe"></i></a></li>
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                 Pages <span class="caret"></span>

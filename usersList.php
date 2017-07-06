@@ -5,6 +5,7 @@ Session::checkSession();
 Session::init();
 $userId = Session::get("userid");
 $username = Session::get("fullname");
+$userName = Session::get('userName');
 require_once 'lib/database.php';
 $db = new Database();
 
@@ -81,7 +82,7 @@ $db = new Database();
 
 <?php 
 
-$query = "SELECT * FROM users WHERE id != '$userId'";
+$query = "SELECT * FROM users WHERE id != '$userId' AND username != '$userName'";
 $result = $db->select($query);
 if ($result) {
   while ($value = $result->fetch_assoc()) {
@@ -96,7 +97,7 @@ if ($result) {
                     <img src="img/Friends/guy-1.jpg" alt="people" class="media-object img-circle">
                   </div>
                   <div class="media-body">
-                    <h4 class="media-heading margin-v-5"><a href="usersProfile.php?userId=<?php echo $value['id']; ?>"><?php echo $value['fullName']; ?></a></h4>
+                    <h4 class="media-heading margin-v-5"><a href="usersProfile.php?userId=<?php echo $value['id']; ?>&&userName=<?php echo $value['username'] ?>"><?php echo $value['fullName']; ?></a></h4>
                     <div class="profile-icons">
                       <span><i class="fa fa-users"></i> 372</span>
                       <span><i class="fa fa-photo"></i> 43</span>
