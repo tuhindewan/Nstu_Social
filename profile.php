@@ -20,10 +20,60 @@ $ePost = new EditPost();
 if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['post'])) {
   if ($_FILES['postImage']['size'] == 0) {
     $body =  $_POST['body'];
+    if (count(notify($body)) != 0) {
+      foreach (notify($body) as $key => $n) {
+        $query = "SELECT id FROM posts ORDER BY id DESC LIMIT 1";
+        $result = $db->select($query);
+        if ($result) {
+          while ($value = $result->fetch_assoc()) {
+            $postId = $value['id'];
+          }
+        }
+        $s = $userId;
+        $query = "SELECT id FROM users WHERE username = '$key'";
+        $res = $db->select($query);
+        if ($res) {
+          while ($val = $res->fetch_assoc()) {
+            $r = $val['id'];
+            if ($r != 0) {
+          $query = "INSERT INTO notifications (type,receiver,sender,datetime,post_id) VALUES ('$n','$r','$s',NOW(),'$postId')";
+          $result = $db->insert($query);
+        }
+          }
+        }
+
+        
+      }
+    }
     $topics = getTopics($body);
     $getData = $post->UserSinglePost($_POST,$userId,$topics);
   }else{
         $body =  $_POST['body'];
+        if (count(notify($body)) != 0) {
+      foreach (notify($body) as $key => $n) {
+        $query = "SELECT id FROM posts ORDER BY id DESC LIMIT 1";
+        $result = $db->select($query);
+        if ($result) {
+          while ($value = $result->fetch_assoc()) {
+            $postId = $value['id'];
+          }
+        }
+        $s = $userId;
+        $query = "SELECT id FROM users WHERE username = '$key'";
+        $res = $db->select($query);
+        if ($res) {
+          while ($val = $res->fetch_assoc()) {
+            $r = $val['id'];
+            if ($r != 0) {
+          $query = "INSERT INTO notifications (type,receiver,sender,datetime,post_id) VALUES ('$n','$r','$s',NOW(),'$postId')";
+          $result = $db->insert($query);
+        }
+          }
+        }
+
+        
+      }
+    }
         $topics = getTopics($body);
     $ImgPostId = $post->createImagePost($_POST,$userId,$topics);
 
@@ -98,6 +148,25 @@ function getTopics($text) {
   }
 
  ?>
+
+ <?php 
+
+
+ function notify($text) {
+        $text = explode(" ", $text);
+        $notify = array();
+
+        foreach ($text as $word) {
+                if (substr($word, 0, 1) == "@") {
+                        $notify[substr($word, 1)] = 1;
+                }
+        }
+
+        return $notify;
+}
+
+
+  ?>
 
 <!DOCTYPE html>
 <html lang="en">

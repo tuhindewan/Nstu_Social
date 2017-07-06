@@ -5,6 +5,7 @@ Session::init();
 $username = Session::get("fullname");
 $userId = Session::get('userid');
 require_once 'lib/database.php';
+$db = new Database();
 require_once 'classes/EditProfile.php';
 $edt = new EditProfile();
 ?>
@@ -207,121 +208,64 @@ $edt = new EditProfile();
       </div><!-- end left content -->
 
       <!-- notification list-->
-        <div class="col-md-7 no-paddin-xs">
-        <div class="panel panel-white post panel-shadow">
-          <div class="post-heading">
-              <div class="pull-left image">
-                  <img src="img/Friends/guy-3.jpg" class="avatar" alt="user profile image">
-              </div>
-              <div class="pull-left meta">
-                  <div class="title h5">
-                      <a href="#" class="post-user-name">Nickson Bejarano</a>
-                      liked your <a href="#">Post</a>
-                  </div>
-                  <h6 class="text-muted time">5 seconds ago</h6>
-              </div>
-          </div>
-        </div>
-
-        <div class="panel panel-white post panel-shadow">
-          <div class="post-heading">
-              <div class="pull-left image">
-                  <img src="img/Friends/guy-2.jpg" class="avatar" alt="user profile image">
-              </div>
-              <div class="pull-left meta">
-                  <div class="title h5">
-                      <a href="#" class="post-user-name">Deyman Bejarano</a>
-                      shared your <a href="#">Post</a>
-                  </div>
-                  <h6 class="text-muted time">5 seconds ago</h6>
-              </div>
-          </div>
-        </div>
-
-        <div class="panel panel-white post panel-shadow">
-          <div class="post-heading">
-              <div class="pull-left image">
-                  <img src="img/Friends/woman-2.jpg" class="avatar" alt="user profile image">
-              </div>
-              <div class="pull-left meta">
-                  <div class="title h5">
-                      <a href="#" class="post-user-name">Denny lawer</a>
-                      shared your <a href="#">Post</a>
-                  </div>
-                  <h6 class="text-muted time">5 seconds ago</h6>
-              </div>
-          </div>
-        </div>
-
-        <div class="panel panel-white post panel-shadow">
-          <div class="post-heading">
-              <div class="pull-left image">
-                  <img src="img/Friends/woman-3.jpg" class="avatar" alt="user profile image">
-              </div>
-              <div class="pull-left meta">
-                  <div class="title h5">
-                      <a href="#" class="post-user-name">Martha cargrot</a>
-                      liked your <a href="#">Post</a>
-                  </div>
-                  <h6 class="text-muted time">5 seconds ago</h6>
-              </div>
-          </div>
-        </div>
-
-        <div class="panel panel-white post panel-shadow">
-          <div class="post-heading">
-              <div class="pull-left image">
-                  <img src="img/Friends/woman-4.jpg" class="avatar" alt="user profile image">
-              </div>
-              <div class="pull-left meta">
-                  <div class="title h5">
-                      <a href="#" class="post-user-name">Carla dorla</a>
-                      liked your <a href="#">Post</a>
-                  </div>
-                  <h6 class="text-muted time">5 seconds ago</h6>
-              </div>
-          </div>
-        </div>
-
-        <div class="panel panel-white post panel-shadow">
-          <div class="post-heading">
-              <div class="pull-left image">
-                  <img src="img/Friends/woman-5.jpg" class="avatar" alt="user profile image">
-              </div>
-              <div class="pull-left meta">
-                  <div class="title h5">
-                      <a href="#" class="post-user-name">Maria Bejarano</a>
-                      liked your <a href="#">Post</a>
-                  </div>
-                  <h6 class="text-muted time">5 seconds ago</h6>
-              </div>
-          </div>
-        </div>
-
-        <div class="panel panel-white post panel-shadow">
-          <div class="post-heading">
-              <div class="pull-left image">
-                  <img src="img/Friends/guy-3.jpg" class="avatar" alt="user profile image">
-              </div>
-              <div class="pull-left meta">
-                  <div class="title h5">
-                      <a href="#" class="post-user-name">Nickson Bejarano</a>
-                      liked your <a href="#">Post</a>
-                  </div>
-                  <h6 class="text-muted time">5 seconds ago</h6>
-              </div>
-          </div>
-        </div>
+        <?php 
 
 
-        <div class="panel panel-white post-load-more panel-shadow text-center">
-          <button class="btn btn-default">
-            <i class="fa fa-refresh"></i>Load More...
-          </button>
-        </div>        
-        </div><!-- notification list-->
-      </div>
+        $query = "SELECT * FROM notifications WHERE receiver = '$userId'";
+        $result = $db->select($query);
+        if ($result) {
+          $query = "SELECT * FROM notifications WHERE receiver = '$userId'";
+          $result = $db->select($query);
+          if ($result) {
+             while ($value = $result->fetch_assoc()) {
+               $type =  $value['type'];
+               $senderId = $value['sender'];
+               $postId = $value['post_id'];
+               $time = $value['datetime'];
+
+             }
+          }
+        }
+
+         ?>
+         <?php if ($type==1) { ?>
+
+         <?php 
+
+         $query = "SELECT * FROM users WHERE id = '$senderId'";
+         $result = $db->select($query);
+         if ($result) {
+            while ($value = $result->fetch_assoc()) {
+
+          ?>
+            <div class="col-md-7 no-paddin-xs">
+              <div class="panel panel-white post panel-shadow">
+                <div class="post-heading">
+                <?php if ($value['avatar']) { ?>
+                  <div class="pull-left image">
+                        <img src="<?php echo $value['avatar']; ?>" class="avatar" alt="user profile image">
+                    </div>
+              <?php   }else{ ?>
+                    <div class="pull-left image">
+                        <img src="img/nophoto.jpg" class="avatar" alt="user profile image">
+                    </div>
+                    <?php } ?>
+                    <div class="pull-left meta">
+                        <div class="title h5">
+                            <a href="usersProfile.php?userName=<?php echo $value['username']; ?>" class="post-user-name"><?php echo $value['fullName']; ?></a>
+                            mentioned you in a <a href="newsFeed.php?postId=<?php echo $postId; ?>">Post</a>
+                        </div>
+                        <h6 class="text-muted time"><?php echo  date("M j, Y h:ia",strtotime($time)) ; ?></h6>
+                    </div>
+                </div>
+              </div>
+            </div>
+
+            <?php }} ?>
+       <?php  } ?>
+      
     </div>
+   </div> 
 
     <!-- Online users sidebar content-->
     <div class="chat-sidebar focus">
