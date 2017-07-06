@@ -13,6 +13,8 @@ require_once 'classes/Post.php';
 $post = new Post();
 require_once 'classes/EditProfile.php';
 $edt = new EditProfile();
+require_once 'classes/EditPost.php';
+$ePost = new EditPost();
 ?>
 <?php
 if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['post'])) {
@@ -37,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['post'])) {
 ?>
 <?php 
 
-if (isset($_GET['postId'])) {
+if (isset($_GET['postId']) && !isset($_POST['deletePost'])) {
   $postId = $_GET['postId'];
   $query = "SELECT user_id FROM post_likes WHERE post_id='$postId' AND user_id = '$userId'";
   $result = $db->select($query);
@@ -430,6 +432,10 @@ function getTopics($text) {
                     </form>
                   </div><!-- end post state form -->
 
+                  <?php if (isset($dPost)) {
+                    echo $dPost;
+                  } ?>
+
                   <!--  posts -->
                   <?php
                   $getVal = $post->getSinglePost($userId);
@@ -443,9 +449,31 @@ function getTopics($text) {
                         <div class="box box-widget">
                     <div class="box-header with-border">
                       <div class="user-block">
+                      <div class="btn-group pull-right activity-actions">
+                          <button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown">
+                              <i class="fa fa-th"></i>
+                              <span class="sr-only">Toggle Dropdown</span>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-right" role="menu">
+                            <?php 
+
+                              if (isset($_GET['delPost'])) {
+                                 $postId =   $_GET['delPost'];
+                                 $dPost = $ePost->deleteSinglePost($postId,$userId);
+                              }
+
+                             ?>
+                              <li><a href="profile.php?delPost=<?php echo $value["id"];?>">  <i class="fa fa-trash" aria-hidden="true"></i> Delete This Post  </a></li>
+                              <li class="divider"></li>
+                              <li><a href="#">Unfollow Antonius</a></li>
+                              <li class="divider"></li>
+                              <li><a href="#">Get Notification</a></li>
+                          </ul>
+                      </div>
                         <img class="img-circle" src="img/Friends/guy-3.jpg" alt="User Image">
                         <span class="username"><a href="#"><?php echo $username ?></a></span>
                         <span class="description">Shared publicly - <?php echo  date("M j, Y h:ia",strtotime($value['posted_at'])) ; ?></span>
+
                       </div>
                     </div>
 
@@ -503,6 +531,27 @@ function getTopics($text) {
                       <div class="box box-widget">
                     <div class="box-header with-border">
                       <div class="user-block">
+                      <div class="btn-group pull-right activity-actions">
+                          <button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown">
+                              <i class="fa fa-th"></i>
+                              <span class="sr-only">Toggle Dropdown</span>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-right" role="menu">
+                          <?php 
+
+                              if (isset($_GET['delPost'])) {
+                                 $postId =   $_GET['delPost'];
+                                 $dPost = $ePost->deleteSinglePost($postId,$userId);
+                              }
+
+                             ?>
+                              <li><a href="profile.php?delPost=<?php echo $value["id"];?>">  <i class="fa fa-trash" aria-hidden="true"></i> Delete This Post  </a></li>
+                              <li class="divider"></li>
+                              <li><a href="#">Unfollow Antonius</a></li>
+                              <li class="divider"></li>
+                              <li><a href="#">Get Notification</a></li>
+                          </ul>
+                      </div>
                         <img class="img-circle" src="img/Friends/guy-3.jpg" alt="User Image">
                         <span class="username"><a href="#"><?php echo $username ?></a></span>
                         <span class="description">Shared publicly - <?php echo  date("M j, Y h:ia",strtotime($value['posted_at'])) ; ?></span>
