@@ -10,6 +10,8 @@ require_once 'lib/database.php';
 $db = new Database();
 
 ?>
+
+
 <!DOCTYPE html>
 <html lang="en"> 
 <!-- Mirrored from demos.bootdey.com/dayday/friends2.html by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 08 May 2017 15:35:46 GMT -->
@@ -39,6 +41,55 @@ $db = new Database();
       <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
+    <style>
+      input[type=text] {
+      width: 130px;
+      box-sizing: border-box;
+      border: 2px solid #ccc;
+      border-radius: 4px;
+      font-size: 16px;
+      background-color: white;
+      background-position: 10px 10px; 
+      background-repeat: no-repeat;
+      padding: 12px 20px 12px 40px;
+      -webkit-transition: width 0.4s ease-in-out;
+      transition: width 0.4s ease-in-out;
+        }
+
+        input[type=text]:focus {
+            width: 100%;
+        }
+        * {
+          box-sizing: border-box;
+      }
+
+      #myUL {
+          list-style-type: none;
+          padding: 0;
+          margin: 0;
+        }
+
+        #myUL li a {
+          border: 1px solid #ddd;
+          margin-top: -1px; /* Prevent double borders */
+          background-color: #f6f6f6;
+          padding: 12px;
+          text-decoration: none;
+          font-size: 18px;
+          color: black;
+          display: block
+        }
+
+        #myUL li a.header {
+          background-color: #e2e2e2;
+          cursor: default;
+        }
+
+        #myUL li a:hover:not(.header) {
+          background-color: #eee;
+        }
+
+    </style>
   </head>
 
   <body>
@@ -78,59 +129,61 @@ $db = new Database();
 
     <!-- Begin page content -->
     <div class="container page-content page-friends">
-        <div class="row friends">
 
-<?php 
+      <div class="row">
+        <h4 style="margin-left: 18px;">Find Your Friends by Their Name...</h4>
+        <div class="col-md-8 col-md-offset2">
+          <input type="text" id="myInput" onkeyup="myFunction()" name="search" placeholder="Find...">
+        </div>
+      </div>
+      
 
-$query = "SELECT * FROM users WHERE id != '$userId' AND username != '$userName'";
-$result = $db->select($query);
-if ($result) {
-  while ($value = $result->fetch_assoc()) {
-    
-?>
+      <ul id="myUL">
+          <div class="row friends" style="margin-top: 20px;">
 
-          <div class="col-md-4">
-            <div class="panel panel-default">
-              <div class="panel-heading">
-                <div class="media">
-                  <div class="pull-left">
-                    <img src="img/Friends/guy-1.jpg" alt="people" class="media-object img-circle">
-                  </div>
-                  <div class="media-body">
-                    <h4 class="media-heading margin-v-5"><a href="usersProfile.php?userId=<?php echo $value['id']; ?>&&userName=<?php echo $value['username'] ?>"><?php echo $value['fullName']; ?></a></h4>
-                    <div class="profile-icons">
-                      <span><i class="fa fa-users"></i> 372</span>
-                      <span><i class="fa fa-photo"></i> 43</span>
-                      <span><i class="fa fa-video-camera"></i> 3</span>
+          <?php 
+
+          $query = "SELECT * FROM users WHERE id != '$userId' AND username != '$userName'";
+          $result = $db->select($query);
+          if ($result) {
+            while ($value = $result->fetch_assoc()) {
+              
+          ?>
+
+          <div class="col-md-8">
+            <li>
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <div class="media">
+                  <?php 
+                  if ($value['avatar']) { ?>
+                    <div class="pull-left">
+                      <img src="<?php echo $value['avatar']; ?>" alt="people" class="media-object img-circle">
+                    </div>
+                <?php  }else{ ?>
+
+                <div class="pull-left">
+                      <img src="img/nophoto.jpg" alt="people" class="media-object img-circle">
+                    </div>
+                 <?php }  ?>
+                    
+
+                    <div class="media-body">
+                      <h4 class="media-heading margin-v-5"><a href="usersProfile.php?userId=<?php echo $value['id']; ?>&&userName=<?php echo $value['username'] ?>"><?php echo $value['fullName']; ?></a></h4>
                     </div>
                   </div>
                 </div>
               </div>
-              <div class="panel-body">
-                <p class="common-friends">Common Friends</p>
-                <div class="user-friend-list">
-                  <a href="#">
-                    <img src="img/Friends/guy-5.jpg" alt="people" class="img-circle">
-                  </a>
-                  <a href="#">
-                    <img src="img/Friends/guy-6.jpg" alt="people" class="img-circle">
-                  </a>
-                  <a href="#">
-                    <img src="img/Friends/woman-6.jpg" alt="people" class="img-circle">
-                  </a>
-                  <a href="#">
-                    <img src="img/Friends/woman-4.jpg" alt="people" class="img-circle">
-                  </a>
-                </div>
-              </div>
-              <div class="panel-footer">
-                <button type="submit" class="btn btn-azure btn-sm" name="follow"><i class="fa fa-user-plus"></i> Follow</button>
-              </div>
-            </div>
+            </li>
           </div>
 <?php }} ?>
 
       </div>
+      </ul>
+
+
+
+        
     </div>
 
     <footer class="footer">
@@ -148,6 +201,23 @@ if ($result) {
           ga('require', 'linker');
           ga('linker:autoLink', ['bootdey.com','www.bootdey.com','demos.bootdey.com'] );
           ga('send', 'pageview');
+
+          function myFunction() {
+          var input, filter, ul, li, a, i;
+          input = document.getElementById("myInput");
+          filter = input.value.toUpperCase();
+          ul = document.getElementById("myUL");
+          li = ul.getElementsByTagName("li");
+          for (i = 0; i < li.length; i++) {
+              a = li[i].getElementsByTagName("a")[0];
+              if (a.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                  li[i].style.display = "";
+              } else {
+                  li[i].style.display = "none";
+
+              }
+          }
+      }
       </script>
   </body>
 

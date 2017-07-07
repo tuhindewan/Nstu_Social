@@ -250,7 +250,7 @@ $edt = new EditProfile();
                     <div class="pull-left meta">
                         <div class="title h5">
                             <a href="usersProfile.php?userName=<?php echo $value['username']; ?>" class="post-user-name"><?php echo $value['fullName']; ?></a>
-                            mentioned you in a <a href="newsFeed.php?postId=<?php echo $postId ?>">Post</a>
+                            mentioned you in a <a href="singlePost.php?postId=<?php echo $postId ?>">Post</a>
                         </div>
                         <h6 class="text-muted time"><?php echo  date("M j, Y h:ia",strtotime($time)) ; ?></h6>
                     </div>
@@ -285,7 +285,7 @@ $edt = new EditProfile();
                     <div class="pull-left meta">
                         <div class="title h5">
                             <a href="usersProfile.php?userName=<?php echo $value['username']; ?>" class="post-user-name"><?php echo $value['fullName']; ?></a>
-                           is like your <a href="profile.php?postId=<?php echo $postId ?>">Post</a>
+                           is like your <a href="singlePost.php?postId=<?php echo $postId ?>">Post</a>
                         </div>
                         <h6 class="text-muted time"><?php echo  date("M j, Y h:ia",strtotime($time)) ; ?></h6>
                     </div>
@@ -321,7 +321,7 @@ $edt = new EditProfile();
                     <div class="pull-left meta">
                         <div class="title h5">
                             <a href="usersProfile.php?userName=<?php echo $value['username']; ?>" class="post-user-name"><?php echo $value['fullName']; ?></a>
-                            commented on your <a href="profile.php?postId=<?php echo $postId ?>">Post</a>
+                            commented on your <a href="singlePost.php?postId=<?php echo $postId ?>">Post</a>
                         </div>
                         <h6 class="text-muted time"><?php echo  date("M j, Y h:ia",strtotime($time)) ; ?></h6>
                     </div>

@@ -96,6 +96,12 @@ class Post
 		return $result;
 	}
 
+	public function getNotifyPost($postId){
+		$query = "SELECT * FROM posts WHERE id = '$postId'";
+		$result= $this->db->select($query);
+		return $result;
+	}
+
 }
 
 ?>

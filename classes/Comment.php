@@ -85,6 +85,12 @@ class Comment
 		return $result;
 	}
 
+	public function getNotifyComment($postId){
+		$query = "SELECT comments.comment,comments.posted_at,comments.post_id, users.fullName FROM comments, users WHERE post_id = '$postId' AND comments.user_id = users.id";
+		$result = $this->db->select($query);
+		return $result;
+	}
+
 }
 
 ?>
