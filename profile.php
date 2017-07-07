@@ -150,8 +150,6 @@ function getTopics($text) {
  ?>
 
  <?php 
-
-
  function notify($text) {
         $text = explode(" ", $text);
         $notify = array();
@@ -164,9 +162,7 @@ function getTopics($text) {
 
         return $notify;
 }
-
-
-  ?>
+?>
 
 <!DOCTYPE html>
 <html lang="en">

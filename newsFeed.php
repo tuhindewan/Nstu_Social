@@ -7,6 +7,7 @@ $db = new Database();
 $userId = Session::get("userid");
 $username = Session::get("fullname");
 $userName = Session::get("userName");
+
 ?>
 <?php
 require_once 'classes/Post.php';
@@ -18,6 +19,12 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['post'])) {
 }
 
 ?>
+
+<?php 
+require_once 'classes/Notify.php';
+$notify = new Notify();
+
+ ?>
 <?php 
 
 if (isset($_GET['postId'])) {
@@ -29,6 +36,7 @@ if (isset($_GET['postId'])) {
     $result = $db->update($query);
     $query = "INSERT INTO post_likes (post_id,user_id) VALUES ('$postId','$userId')";
     $result = $db->insert($query);
+    $getLike = $notify->likeNotify($postId);
   }else{
     $query = "UPDATE posts SET likes=likes-1 WHERE id = '$postId'";
     $result = $db->update($query);
@@ -44,6 +52,9 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['submit_comm']) ) {
   $getComment = $cmnt->createFeedComment($_POST['commentbody'],$_GET['postId2'],$userId);
 }
 ?>
+
+
+
 <!DOCTYPE html>
 <html lang="en">
   
