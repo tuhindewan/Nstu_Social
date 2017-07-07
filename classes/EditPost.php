@@ -28,7 +28,6 @@ class EditPost
 			$query = "DELETE FROM post_likes WHERE post_id = '$postId'";
 			$result = $this->db->delete($query);
 
-			header("Location:profile.php");
 
 			$msg = "<div class='alert alert-success' role='alert'>Post has been deleted successfully.</div>";
 				return $msg;

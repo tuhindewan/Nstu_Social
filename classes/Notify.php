@@ -1,5 +1,6 @@
 <?php 
 require_once 'lib/session.php';
+Session::init();
 require_once 'lib/database.php';
 require_once 'helpers/format.php';
 ?>
@@ -29,6 +30,19 @@ class Notify
   			}
   		}
 
+  }
+
+  public function commentNotify($postId2){
+    $commemtorId = Session::get("userid");
+    $query = "SELECT posts.user_id AS receiver FROM posts WHERE posts.id='$postId2'";
+      $res = $this->db->select($query);
+      if ($res) {
+        while ($val = $res->fetch_assoc()) {
+          $r = $val['receiver'];
+          $query = "INSERT INTO notifications (type,receiver,sender,datetime,post_id) VALUES ('3','$r','$commemtorId',NOW(),'$postId2')";
+          $result = $this->db->insert($query);
+        }
+      }
   }
 
 }

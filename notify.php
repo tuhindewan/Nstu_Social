@@ -285,7 +285,43 @@ $edt = new EditProfile();
                     <div class="pull-left meta">
                         <div class="title h5">
                             <a href="usersProfile.php?userName=<?php echo $value['username']; ?>" class="post-user-name"><?php echo $value['fullName']; ?></a>
-                            like your <a href="profile.php?postId=<?php echo $postId ?>">Post</a>
+                           is like your <a href="profile.php?postId=<?php echo $postId ?>">Post</a>
+                        </div>
+                        <h6 class="text-muted time"><?php echo  date("M j, Y h:ia",strtotime($time)) ; ?></h6>
+                    </div>
+                </div>
+              </div>
+            </div>
+
+            <?php }} ?>
+       <?php  } ?>
+
+       <?php if ($type==3) { ?>
+
+         <?php 
+
+         $query = "SELECT * FROM users WHERE id = '$senderId'";
+         $result = $db->select($query);
+         if ($result) {
+            while ($value = $result->fetch_assoc()) {
+
+          ?>
+            <div class="col-md-7 no-paddin-xs">
+              <div class="panel panel-white post panel-shadow">
+                <div class="post-heading">
+                <?php if ($value['avatar']) { ?>
+                  <div class="pull-left image">
+                        <img src="<?php echo $value['avatar']; ?>" class="avatar" alt="user profile image">
+                    </div>
+              <?php   }else{ ?>
+                    <div class="pull-left image">
+                        <img src="img/nophoto.jpg" class="avatar" alt="user profile image">
+                    </div>
+                    <?php } ?>
+                    <div class="pull-left meta">
+                        <div class="title h5">
+                            <a href="usersProfile.php?userName=<?php echo $value['username']; ?>" class="post-user-name"><?php echo $value['fullName']; ?></a>
+                            commented on your <a href="profile.php?postId=<?php echo $postId ?>">Post</a>
                         </div>
                         <h6 class="text-muted time"><?php echo  date("M j, Y h:ia",strtotime($time)) ; ?></h6>
                     </div>

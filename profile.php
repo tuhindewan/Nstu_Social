@@ -110,7 +110,7 @@ if (isset($_GET['postId']) && !isset($_POST['deletePost'])) {
 require_once 'classes/Comment.php';
 $cmnt = new Comment();
 if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['submit_comm']) ) {
-  $getComment = $cmnt->createComment($_POST['commentbody'],$_GET['postId'],$userId);
+  $getComment = $cmnt->createComment($_POST['commentbody'],$_GET['postId2'],$userId);
 }
 ?>
 
@@ -577,7 +577,7 @@ function getTopics($text) {
                         echo $getComment;
                       } ?>
                     <div class="box-footer" style="display: block;">
-                      <form action="profile.php?postId=<?php echo $value["id"]; ?>" method="POST" id="my_form">
+                      <form action="profile.php?postId2=<?php echo $value["id"]; ?>" method="POST" id="my_form">
                         <img class="img-responsive img-circle img-sm" src="img/Friends/guy-3.jpg" alt="Alt Text">
                         <div class="img-push">
                           <input name="commentbody" id="comment" type="text" class="form-control input-sm" placeholder="Press enter to post comment">
@@ -660,7 +660,7 @@ function getTopics($text) {
                         echo $getComment;
                       } ?>
                     <div class="box-footer" style="display: block;">
-                      <form action="profile.php?postId=<?php echo $value["id"]; ?>" method="POST" id="my_form">
+                      <form action="profile.php?postId2=<?php echo $value["id"]; ?>" method="POST" id="my_form">
                         <img class="img-responsive img-circle img-sm" src="img/Friends/guy-3.jpg" alt="Alt Text">
                         <div class="img-push">
                           <input name="commentbody" id="comment" type="text" class="form-control input-sm" placeholder="Press enter to post comment">

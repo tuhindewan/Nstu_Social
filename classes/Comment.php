@@ -18,7 +18,7 @@ class Comment
 
 	public function createComment($data,$postId,$userId){
 		$commentbody = $_POST['commentbody'];
-		$postId	  = $_GET['postId'];
+		$postId	  = $_GET['postId2'];
 		if (empty($commentbody)) {
 			$msg = "<div class='alert alert-danger' role='alert'>Please Write something.</div>";
 				return $msg;
@@ -60,6 +60,7 @@ class Comment
 		$query = "SELECT id FROM posts WHERE id = '$postId'";
 		$result = $this->db->select($query);
 		if ($result==false) {
+			
 			$msg = "<div class='alert alert-danger' role='alert'>Invalid Post ID.</div>";
 				return $msg;
 		}else{

@@ -49,7 +49,10 @@ if (isset($_GET['postId'])) {
 require_once 'classes/Comment.php';
 $cmnt = new Comment();
 if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['submit_comm']) ) {
+  $postId2 = $_GET["postId2"];
+  $cmntNotify = $notify->commentNotify($postId2);
   $getComment = $cmnt->createFeedComment($_POST['commentbody'],$_GET['postId2'],$userId);
+  
 }
 ?>
 
