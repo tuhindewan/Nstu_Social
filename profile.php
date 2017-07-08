@@ -214,6 +214,7 @@ function getTopics($text) {
           <ul class="nav navbar-nav navbar-right">
             <li class="actives"><a href="profile.php"><strong><?php echo $username; ?></strong></a></li>
             <li><a href="newsFeed.php">Home</a></li>
+            <li><a href="messages.php"><i class="fa fa-comments"></i></a></li>
             <li><a href="notify.php"><i class="fa fa-globe"></i></a></li>
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
@@ -577,7 +578,7 @@ function getTopics($text) {
                         echo $getComment;
                       } ?>
                     <div class="box-footer" style="display: block;">
-                      <form action="profile.php?postId2=<?php echo $value["id"]; ?>" method="POST" id="my_form">
+                      <form action="profile.php?postId2=<?php echo $value['id']; ?>" method="POST" id="my_form">
                         <img class="img-responsive img-circle img-sm" src="img/Friends/guy-3.jpg" alt="Alt Text">
                         <div class="img-push">
                           <input name="commentbody" id="comment" type="text" class="form-control input-sm" placeholder="Press enter to post comment">
@@ -660,7 +661,7 @@ function getTopics($text) {
                         echo $getComment;
                       } ?>
                     <div class="box-footer" style="display: block;">
-                      <form action="profile.php?postId2=<?php echo $value["id"]; ?>" method="POST" id="my_form">
+                      <form action="profile.php?postId2=<?php echo $value['id']; ?>" method="POST" id="my_form">
                         <img class="img-responsive img-circle img-sm" src="img/Friends/guy-3.jpg" alt="Alt Text">
                         <div class="img-push">
                           <input name="commentbody" id="comment" type="text" class="form-control input-sm" placeholder="Press enter to post comment">
