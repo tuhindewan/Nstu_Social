@@ -94,6 +94,9 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['reset'])) {
                             <div class="form-group">
                               <input name="reset" class="btn btn-lg btn-primary btn-block" value="Reset Password" type="submit">
                             </div>
+                            <div class="form-group">
+                              <a href="index.php" class="btn btn-lg btn-success ">Go To Login Page</a>
+                            </div>
                             
                             <input type="hidden" class="hide" name="token" id="token" value=""> 
                           </form>

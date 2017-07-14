@@ -21,13 +21,31 @@ class EditProfile
 		$newPassword =  $_POST['newPassword'];
 		$passwordRepeat =  $_POST['passwordRepeat'];
 
+		$oldPassword = $this->fm->validation($oldPassword);
 		$newPassword = $this->fm->validation($newPassword);
 		$passwordRepeat = $this->fm->validation($passwordRepeat);
 
+		$oldPassword = mysqli_real_escape_string($this->db->link,$oldPassword);
 		$newPassword = mysqli_real_escape_string($this->db->link,$newPassword);
 		$passwordRepeat = mysqli_real_escape_string($this->db->link,$passwordRepeat);
 
-		if (empty($newPassword) || empty($passwordRepeat)) {
+		$query = "SELECT password FROM users WHERE id = '$userId'";
+		$result = $this->db->select($query);
+		if ($result) {
+			while ($val = $result->fetch_assoc()) {
+				$oldPass = $val['password'];
+			}
+		}
+		if ($oldPass!=$oldPassword) {
+			$msg = "<div class='alert alert-danger' role='alert'>Your entered password is not matched to your old password.</div>";
+			return $msg;
+		}
+		elseif (empty($oldPassword)) {
+			$msg = "<div class='alert alert-danger' role='alert'>Old Password  field is required.</div>";
+				return $msg;
+		}
+		
+		elseif (empty($newPassword) || empty($passwordRepeat)) {
 				$msg = "<div class='alert alert-danger' role='alert'>New Password or Repeat Password field is required.</div>";
 				return $msg;
 			}elseif(!preg_match('/^(?=.*\d)(?=.*[A-Za-z])[0-9A-Za-z!@#$%]{8,12}$/', $newPassword)) {
@@ -37,7 +55,7 @@ class EditProfile
 			$msg = "<div class='alert alert-danger' role='alert'>New password and Repeat password does not match.</div>";
 			return $msg;
 		}else{
-			$query = "UPDATE users SET password = '$newPassword' WHERE id = '$userId'";
+			$query = "UPDATE users SET password = '$newPassword',confirmPassword = '$passwordRepeat' WHERE id = '$userId'";
 			$insertRow = $this->db->update($query);
 			if ($insertRow) {
 				$msg = "<div class='alert alert-success' role='alert'>You have successfully changed your password!!</div>";

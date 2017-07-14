@@ -7,6 +7,7 @@ require_once 'lib/database.php';
 $db = new Database();
 $userId = Session::get("userid");
 $username = Session::get("fullname");
+$userName = Session::get("userName");
 ?>
 <?php
 require_once 'classes/Post.php';
@@ -163,6 +164,10 @@ function getTopics($text) {
         return $notify;
 }
 ?>
+<?php 
+require_once 'classes/Information.php';
+$info = new Information();
+ ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -218,24 +223,19 @@ function getTopics($text) {
             <li><a href="notify.php"><i class="fa fa-globe"></i></a></li>
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                Pages <span class="caret"></span>
+                <?php echo $userName; ?> <span class="caret"></span>
               </a>
               <ul class="dropdown-menu">
-                <li><a href="#">Action</a></li>
-                <li><a href="#">Another action</a></li>
-                <li><a href="#">Something else here</a></li>
-                <li role="separator" class="divider"></li>
                 <li><a href="editProfile.php">Account Settings</a></li>
                 <li role="separator" class="divider"></li>
                 <?php 
                     if (isset($_GET['action']) && $_GET['action']=='logout') {
-                       session_destroy();
+                       Session::destroy();
                     }
                  ?>
                 <li><a href="?action=logout">Logout</a></li>
               </ul>
             </li>
-            <li><a href="#" class="nav-controller"><i class="fa fa-user"></i></a></li>
           </ul>
         </div>
       </div>
@@ -285,10 +285,10 @@ function getTopics($text) {
               <?php }} ?>
               <div class="name"><a href="#"><?php echo $username ?></a></div>
               <ul class="cover-nav">
-                <li class="active"><a href="profile.html"><i class="fa fa-fw fa-bars"></i> Timeline</a></li>
-                <li><a href="about.html"><i class="fa fa-fw fa-user"></i> About</a></li>
-                <li><a href="friends.html"><i class="fa fa-fw fa-users"></i> Friends</a></li>
-                <li><a href="photos1.html"><i class="fa fa-fw fa-image"></i> Photos</a></li>
+                <li class="active"><a href="profile.php"><i class="fa fa-fw fa-bars"></i> Timeline</a></li>
+                <li><a href="about.php"><i class="fa fa-fw fa-user"></i> About</a></li>
+                <li><a href="friends.php"><i class="fa fa-fw fa-users"></i> Friends</a></li>
+                <li><a href="photos.php"><i class="fa fa-fw fa-image"></i> Photos</a></li>
               </ul>
             </div>
           </div>
@@ -300,40 +300,58 @@ function getTopics($text) {
             <div class="widget-header">
               <h3 class="widget-caption">About</h3>
             </div>
+            
+            <?php 
+
+
+              $getInfo = $info->getInformation($userId);
+              if ($getInfo) {
+                while ($value = $getInfo->fetch_assoc()) {
+
+             ?>
+
             <div class="widget-body bordered-top bordered-sky">
               <ul class="list-unstyled profile-about margin-none">
                 <li class="padding-v-5">
                   <div class="row">
                     <div class="col-sm-4"><span class="text-muted">Date of Birth</span></div>
-                    <div class="col-sm-8">12 January 1990</div>
-                  </div>
-                </li>
-                <li class="padding-v-5">
-                  <div class="row">
-                    <div class="col-sm-4"><span class="text-muted">Job</span></div>
-                    <div class="col-sm-8">Ninja developer</div>
+                    <div class="col-sm-8"><?php echo date("M j, Y",strtotime($value['birthDate']));  ?></div>
                   </div>
                 </li>
                 <li class="padding-v-5">
                   <div class="row">
                     <div class="col-sm-4"><span class="text-muted">Gender</span></div>
-                    <div class="col-sm-8">Male</div>
+                    <div class="col-sm-8"><?php echo $value['gender'];  ?></div>
+                  </div>
+                </li>
+                <li class="padding-v-5">
+                  <div class="row">
+                    <div class="col-sm-4"><span class="text-muted">Department</span></div>
+                    <div class="col-sm-8"><?php echo $value['department'];  ?> </div>
+                  </div>
+                </li>
+                <li class="padding-v-5">
+                  <div class="row">
+                    <div class="col-sm-4"><span class="text-muted">Status</span></div>
+                    <div class="col-sm-8"><?php echo $value['status'];  ?> </div>
+                  </div>
+                </li>
+                <li class="padding-v-5">
+                  <div class="row">
+                    <div class="col-sm-4"><span class="text-muted">Email</span></div>
+                    <div class="col-sm-8"><?php echo $value['email'];  ?></div>
                   </div>
                 </li>
                 <li class="padding-v-5">
                   <div class="row">
                     <div class="col-sm-4"><span class="text-muted">Lives in</span></div>
-                    <div class="col-sm-8">Miami, FL, USA</div>
-                  </div>
-                </li>
-                <li class="padding-v-5">
-                  <div class="row">
-                    <div class="col-sm-4"><span class="text-muted">Credits</span></div>
-                    <div class="col-sm-8">249</div>
+                    <div class="col-sm-8"><?php echo ucfirst($value['address']);  ?></div>
                   </div>
                 </li>
               </ul>
             </div>
+
+            <?php }} ?>
           </div>
 
           <div class="widget widget-friends">
@@ -344,116 +362,38 @@ function getTopics($text) {
               <div class="row">
                 <div class="col-md-12">
                   <ul class="img-grid" style="margin: 0 auto;">
+                          <?php 
+
+                          $query = "SELECT user_id FROM followers WHERE follower_id = '$userId'";
+                          $result = $db->select($query);
+                          if ($result) {
+                            foreach ($result as $friend_id) {
+                                $friend_id = $friend_id['user_id'];
+
+                                $query = "SELECT * FROM users WHERE id = '$friend_id'";
+                                $result = $db->select($query);
+                                if ($result) {
+                                  foreach ($result as $value) {
+
+               
+                         ?>
                     <li>
-                      <a href="#">
-                        <img src="img/Friends/guy-6.jpg" alt="image">
+                    <?php 
+                      if ($value['avatar']) { ?>
+                        <a href="usersProfile.php?userId=<?php echo $value['id']; ?>&&userName=<?php echo $value['username'] ?>">
+                        <img src="<?php echo $value['avatar']; ?>" alt="image">
                       </a>
-                    </li>
-                    <li>
-                      <a href="#">
-                        <img src="img/Friends/woman-3.jpg" alt="image">
+                    <?php  }else{ ?>
+                          <a href="usersProfile.php?userId=<?php echo $value['id']; ?>&&userName=<?php echo $value['username'] ?>">
+                        <img src="img/nophoto.jpg" alt="image">
                       </a>
+                   <?php }  ?>
+                      
                     </li>
-                    <li>
-                      <a href="#">
-                        <img src="img/Friends/guy-2.jpg" alt="image">
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#">
-                        <img src="img/Friends/guy-9.jpg" alt="image">
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#">
-                        <img src="img/Friends/woman-9.jpg" alt="image">
-                      </a>
-                    </li>
-                    <li class="clearfix">
-                      <a href="#">
-                        <img src="img/Friends/guy-4.jpg" alt="image">
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#">
-                        <img src="img/Friends/guy-1.jpg" alt="image">
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#">
-                        <img src="img/Friends/woman-4.jpg" alt="image">
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#">
-                        <img src="img/Friends/guy-6.jpg" alt="image">
-                      </a>
-                    </li>
+                    <?php }}}} ?>
                   </ul>
                 </div>
               </div>
-            </div>
-          </div>
-
-          <div class="widget">
-            <div class="widget-header">
-              <h3 class="widget-caption">Groups</h3>
-            </div>
-            <div class="widget-body bordered-top bordered-sky">
-              <div class="card">
-                <div class="content">
-                  <ul class="list-unstyled team-members">
-                    <li>
-                      <div class="row">
-                          <div class="col-xs-3">
-                              <div class="avatar">
-                                  <img src="img/Likes/likes-1.png" alt="Circle Image" class="img-circle img-no-padding img-responsive">
-                              </div>
-                          </div>
-                          <div class="col-xs-6">
-                             Github
-                          </div>
-              
-                          <div class="col-xs-3 text-right">
-                              <btn class="btn btn-sm btn-azure btn-icon"><i class="fa fa-user"></i></btn>
-                          </div>
-                      </div>
-                    </li>
-                    <li>
-                      <div class="row">
-                          <div class="col-xs-3">
-                              <div class="avatar">
-                                  <img src="img/Likes/likes-3.png" alt="Circle Image" class="img-circle img-no-padding img-responsive">
-                              </div>
-                          </div>
-                          <div class="col-xs-6">
-                              Css snippets
-                          </div>
-              
-                          <div class="col-xs-3 text-right">
-                              <btn class="btn btn-sm btn-azure btn-icon"><i class="fa fa-user"></i></btn>
-                          </div>
-                      </div>
-                    </li>
-                    <li>
-                      <div class="row">
-                          <div class="col-xs-3">
-                              <div class="avatar">
-                                  <img src="img/Likes/likes-2.png" alt="Circle Image" class="img-circle img-no-padding img-responsive">
-                              </div>
-                          </div>
-                          <div class="col-xs-6">
-                              Html Action
-                          </div>
-              
-                          <div class="col-xs-3 text-right">
-                              <btn class="btn btn-sm btn-azure btn-icon"><i class="fa fa-user"></i></btn>
-                          </div>
-                      </div>
-                    </li>
-                  </ul>
-                </div>
-              </div>  
             </div>
           </div>
         </div>
@@ -547,8 +487,6 @@ function getTopics($text) {
                         <img class="img-responsive show-in-modal" src="<?php echo $value["postImage"]; ?>" alt="Photo">
                    <?php   } ?>
                       
-
-                      <button type="button" class="btn btn-default btn-xs"><i class="fa fa-share"></i> Share</button>
                       <form action="profile.php?postId=<?php echo $value["id"]; ?>" method="POST">
                         <button type="submit" class="btn btn-default btn-xs" name="like"><i class="fa fa-thumbs-o-up"></i> Like</button>
                       </form>
@@ -627,7 +565,6 @@ function getTopics($text) {
                       if ($value["postImage"]) { ?>
                         <img class="img-responsive show-in-modal" src="<?php echo $value["postImage"]; ?>" alt="Photo">
                    <?php  } ?>
-                      <button type="button" class="btn btn-default btn-xs"><i class="fa fa-share"></i> Share</button>
                       <form action="profile.php?postId=<?php echo $value["id"]; ?>" method="POST">
                         <button type="submit" class="btn btn-default btn-xs" name="unlike"><i class="fa fa-thumbs-o-up"></i> unLike</button>
                       </form>
@@ -683,28 +620,7 @@ function getTopics($text) {
     </div>
 
 
-    <!-- Online users sidebar content-->
-    <div class="chat-sidebar focus">
-      <div class="list-group text-left">
-        <p class="text-center visible-xs"><a href="#" class="hide-chat btn btn-success">Hide</a></p> 
-        <p class="text-center chat-title">Online users</p>  
-        <a href="messages1.html" class="list-group-item">
-          <i class="fa fa-check-circle connected-status"></i>
-          <img src="img/Friends/guy-2.jpg" class="img-chat img-thumbnail">
-          <span class="chat-user-name">Jeferh Smith</span>
-        </a>
-        <a href="messages1.html" class="list-group-item">
-          <i class="fa fa-times-circle absent-status"></i>
-          <img src="img/Friends/woman-1.jpg" class="img-chat img-thumbnail">
-          <span class="chat-user-name">Dapibus acatar</span>
-        </a>
-        <a href="messages1.html" class="list-group-item">
-          <i class="fa fa-check-circle connected-status"></i>
-          <img src="img/Friends/guy-3.jpg" class="img-chat img-thumbnail">
-          <span class="chat-user-name">Antony andrew lobghi</span>
-        </a>
-      </div>
-    </div><!-- Online users sidebar content-->
+    
 
     <footer class="footer">
         <div class="container">

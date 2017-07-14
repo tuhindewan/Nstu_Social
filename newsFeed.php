@@ -71,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['submit_comm']) ) {
     <meta name="keywords" content="">
     <meta name="author" content="">
     <link rel="icon" href="img/favicon.png">
-    <title>Day-Day</title>
+    <title>NSTUSocial</title>
     <!-- Bootstrap core CSS -->
     <link href="bootstrap.3.3.6/css/bootstrap.min.css" rel="stylesheet">
     <link href="font-awesome.4.6.1/css/font-awesome.min.css" rel="stylesheet">
@@ -102,7 +102,7 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['submit_comm']) ) {
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="index-2.html"><b>DayDay</b></a>
+          <a class="navbar-brand" href="index-2.html"><b>NSTUSocial</b></a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">

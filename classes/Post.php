@@ -102,6 +102,12 @@ class Post
 		return $result;
 	}
 
+	public function getUserImage($userId){
+		$query = "SELECT postImage FROM posts WHERE user_id = '$userId'";
+		$result= $this->db->select($query);
+		return $result;
+	}
+
 }
 
 ?>

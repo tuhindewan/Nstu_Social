@@ -22,8 +22,8 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['saveChanges'])) {
 
 require_once 'classes/Information.php';
 $info = new Information();
-if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['saveinfo'])) {
-  $saveinfo = $info->addInformation($_POST,$userId);
+if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['updateinfo'])) {
+  $updateinfo = $info->updateInformation($_POST,$userId);
 }
  ?>
  <?php 
@@ -97,7 +97,7 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['saveinfo'])) {
                 <li role="separator" class="divider"></li>
                 <?php 
                     if (isset($_GET['action']) && $_GET['action']=='logout') {
-                       session_destroy();
+                      Session::destroy();
                     }
                  ?>
                 <li><a href="?action=logout">Logout</a></li>
@@ -122,6 +122,11 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['saveinfo'])) {
         if (isset($saveinfo)) {
            echo $saveinfo;
          } ?>
+         <?php 
+          if (isset($updateinfo)) {
+            echo $updateinfo;
+          }
+          ?>
 
             <!-- NAV TABS -->
           <ul class="nav nav-tabs nav-tabs-custom-colored tabs-iconized">
@@ -200,12 +205,7 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['saveinfo'])) {
                 </div>
                 <div class="col-md-9">
 
-<?php 
-
-$query = "SELECT * FROM user_information WHERE userId = '$userId'";
-    $result = $db->select($query);
-    if (!$result) { ?>
-      <form  action="" method="POST">
+                <form  action="" method="POST">
                       <div class="user-info-right">
                         <div class="basic-info">
                           <h3><i class="fa fa-square"></i> Basic Information</h3>
@@ -279,12 +279,9 @@ $query = "SELECT * FROM user_information WHERE userId = '$userId'";
                         </div>
                       </div>
                       <div class="text-center">
-                        <input type="submit" class="btn btn-success btn-lg" value="Save Info" name="saveinfo">
+                        <input type="submit" class="btn btn-success btn-lg" value="Update Info" name="updateinfo">
                       </div>
                   </form>
-  <?php  }else{?>
-          <div class='alert alert-success' role='alert'>We have your profile information. If you want to edit your information <a href="editInformation.php"><strong>Click Here</strong></a>.</div>
- <?php }?>
                   
 
 

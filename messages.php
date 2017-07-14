@@ -2,15 +2,37 @@
 require_once 'lib/session.php';
 Session::checkSession();
 Session::init();
+$cstrong = True;
+$token = bin2hex(openssl_random_pseudo_bytes(64, $cstrong));
+if (!isset($_SESSION['token'])) {
+        $_SESSION['token'] = $token;
+}
 require_once 'lib/database.php';
 $db = new Database();
 $userId = Session::get("userid");
 $username = Session::get("fullname");
 $userName = Session::get("userName");
 ?>
+<?php  
+
+$query = "SELECT avatar FROM users WHERE id = '$userId'";
+$result = $db->select($query);
+if ($result) {
+  while ($value = $result->fetch_assoc()) {
+    $avatar = $value['avatar'];
+  }
+}
+
+?>
 <?php 
 
   if (isset($_POST['send'])) {
+    if (!isset($_POST['nocsrf'])) {
+                die("INVALID TOKEN");
+        }
+        if ($_POST['nocsrf'] != $_SESSION['token']) {
+                die("INVALID TOKEN");
+        }
     $body = $_POST['body'];
     $receiver = htmlspecialchars($_GET['receiver']);
     $query = "SELECT id FROM users WHERE id = '$receiver'";
@@ -71,7 +93,7 @@ $userName = Session::get("userName");
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="index-2.html"><b>DayDay</b></a>
+          <a class="navbar-brand" href="index-2.html"><b>NSTUSocial</b></a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
@@ -172,7 +194,7 @@ $userName = Session::get("userName");
 
 
           $msgId = $_GET['msgId'];            
-          $query = "SELECT * FROM messages WHERE id = '$msgId' AND receiver = '$userId' OR sender = '$userId'";
+          $query = "SELECT * FROM messages WHERE id = '$msgId' AND (receiver = '$userId' OR sender = '$userId')";
           $messages = $db->select($query);
           if ($messages) {
             foreach ($messages as $message) {
@@ -224,6 +246,7 @@ $userName = Session::get("userName");
             
               <div class="msb-reply">
                   <textarea name="body" placeholder="Type Message Here..."></textarea>
+                  <input type="hidden" name="nocsrf" value="<?php echo $_SESSION['token']; ?>">
                   <button type="submit" name="send"><i class="fa fa-paper-plane-o"></i></button>
               </div>
 
@@ -233,8 +256,17 @@ $userName = Session::get("userName");
            <?php }else{ ?>
             <div class="ms-menu">
           <div class="ms-user clearfix">
-              <img src="img/Friends/guy-3.jpg" alt="" class="img-avatar pull-left">
-              <div>Signed in as <br> gronemo@gmail.com</div>
+          <?php 
+            if ($avatar) { ?>
+              <img src="<?php echo $avatar; ?>" alt="" class="img-avatar pull-left">
+           <?php }else{ ?>
+           <img src="img/nophoto.jpg" alt="" class="img-avatar pull-left">
+       <?php  }   ?>
+              
+              <div>Signed in as <br> <?php echo $username ?> <br>
+
+                  Username: <small><?php echo $userName; ?></small>
+              </div>
           </div>
           
           <div class="p-15">
@@ -263,7 +295,12 @@ $userName = Session::get("userName");
                ?>
               <a class="list-group-item media" href="messages.php?msgId=<?php echo $message['id']; ?>">
                   <div class="pull-left">
-                      <img src="<?php echo $sender['avatar']; ?>" alt="" class="img-avatar">
+                      <?php 
+                        if ($avatar) { ?>
+                          <img src="<?php echo $avatar; ?>" alt="" class="img-avatar ">
+                       <?php }else{ ?>
+                       <img src="img/nophoto.jpg" alt="" class="img-avatar ">
+                   <?php  }   ?>
                   </div>
                   <div class="media-body">
                       <?php 
