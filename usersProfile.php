@@ -7,8 +7,8 @@ if (isset($_GET['userName'])) {
   $query = "SELECT id FROM users WHERE username = '$userName'";
   $result = $db->select($query);
   if ($result) {
-    while ($value=$result->fetch_assoc()) {
-      $userNameId = $value['id'];
+    foreach ($result as $userNameId){
+      $userNameId = $userNameId['id'];
     }
   }
 }
@@ -22,6 +22,12 @@ $followerId = Session::get("userid");
 $username = Session::get("fullname");
 
  ?>
+
+ <?php 
+require_once 'classes/Information.php';
+$info = new Information();
+
+  ?>
 <!DOCTYPE html>
 <html lang="en">
   
@@ -35,7 +41,7 @@ $username = Session::get("fullname");
     <meta name="keywords" content="">
     <meta name="author" content="">
     <link rel="icon" href="img/favicon.png">
-    <title>Day-Day</title>
+    <title>NSTUSocial | A Social Communication Site for NSTU</title>
     <!-- Bootstrap core CSS -->
     <link href="bootstrap.3.3.6/css/bootstrap.min.css" rel="stylesheet">
     <link href="font-awesome.4.6.1/css/font-awesome.min.css" rel="stylesheet">
@@ -66,24 +72,29 @@ $username = Session::get("fullname");
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="index-2.html"><b>DayDay</b></a>
+          <a class="navbar-brand" href="home.php"><b>NSTUSocial</b></a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
             <li class="actives"><a href="profile.php"><strong><?php echo $username; ?></strong></a></li>
-            <li><a href="home.html">Home</a></li>
+            <li><a href="newsFeed.php">Home</a></li>
+            <li><a href="messages.php"><i class="fa fa-comments"></i></a></li>
+            <li><a href="notify.php"><i class="fa fa-globe"></i></a></li>
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                Pages <span class="caret"></span>
+                <?php echo $userName; ?> <span class="caret"></span>
               </a>
               <ul class="dropdown-menu">
-                <li><a href="profile2.html">Profile 2</a></li>
-                <li><a href="profile3.html">Profile 3</a></li>
-                <li><a href="profile4.html">Profile 4</a></li>
-                <li><a href="sidebar_profile.html">Sidebar profile</a></li>
+                <li><a href="editProfile.php">Account Settings</a></li>
+                <li role="separator" class="divider"></li>
+                <?php 
+                    if (isset($_GET['action']) && $_GET['action']=='logout') {
+                       Session::destroy();
+                    }
+                 ?>
+                <li><a href="?action=logout">Logout</a></li>
               </ul>
             </li>
-            <li><a href="#" class="nav-controller"><i class="fa fa-user"></i></a></li>
           </ul>
         </div>
       </div>
@@ -98,31 +109,54 @@ $username = Session::get("fullname");
       <div class="row">
       <div class="col-md-10 col-md-offset-1">
       <div class="user-profile">
+          <?php 
+            $query = "SELECT * FROM users WHERE id = '$userNameId'";
+            $result = $db->select($query);
+            if ($result) {
+              foreach ($result as  $value) {
+                
+             ?>
         <div class="profile-header-background">
-          <img src="img/Cover/game.jpg" alt="Profile Header Background">
+          <?php 
+          if ($value['cover']) { ?>
+            <img width="945px" height="310px" src="<?php echo $value['cover']; ?>" alt="Profile Header Background">
+        <?php  }else{ ?>
+          <img width="945px" height="310px" src="img/blank.jpg" alt="Profile Header Background">
+          <?php } ?>
+
+
         </div>
+        <?php }} ?>
         <div class="row">
+
+
           <div class="col-md-4">
             <div class="profile-info-left">
+            <?php 
+            $query = "SELECT * FROM users WHERE id = '$userNameId'";
+            $result = $db->select($query);
+            if ($result) {
+              foreach ($result as  $value) {
+                
+             ?>
               <div class="text-center">
-                  <img src="img/Friends/guy-3.jpg" alt="Avatar" class="avatar img-circle">
-                  <?php                    
-  
-                  $query = "SELECT * FROM users WHERE username= '$userName'";
-                  $result= $db->select($query);
-                  if ($result) {
-                      while ($value = $result->fetch_assoc()) {
-                        //$followedId = $value['id'];
-                  ?>
+                  <?php 
+                    if ($value['avatar']) { ?>
+                      <img width="114px" height="114px" src="<?php echo $value['avatar']; ?>" alt="Avatar" class="avatar img-circle">
+                <?php    }else{ ?>
+                  <img width="114px" height="114px" src="img/nophoto.jpg" alt="Avatar" class="avatar img-circle">
+                <?php }   ?>
+
+
                   <h2><?php echo $value['fullName']; ?></h2>
-                  <?php }} ?>
               </div>
+             <?php }} ?> 
               <div class="action-buttons">
                 <div class="row">
                   <div class="col-xs-6">
                   <?php  
                   $isFollowing = False;
-                  $select_query = "SELECT follower_id FROM followers WHERE user_id='$userNameId'";
+                  $select_query = "SELECT * FROM followers WHERE user_id='$userNameId' AND follower_id = '$followerId'";
                     $result= $db->select($select_query);
                   if (isset($_POST['follow'])) {
                     if ($userNameId!=$followerId) {
@@ -172,16 +206,30 @@ $username = Session::get("fullname");
                   </div>
                 </div>
               </div>
+
+
               <div class="section">
                   <h3>About Me</h3>
-                  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut sed ullamcorper ligula. Curabitur in sapien sed risus finibus condimentum et ac quam. Quisque eleifend, lacus ut commodo pulvinar, elit augue eleifend leo, eget suscipit augue erat id orci. .</p>
+            <?php 
+
+            $getAbout = $info->getUserAbout($userNameId);
+            if ($getAbout) {
+              foreach ($getAbout as $value) {
+                $about = $value['about']; 
+
+             ?>
+                  <p><?php echo $about; ?></p>
+            <?php }} ?>
               </div>
+              <?php 
+              if ($isFollowing==True) { ?>
               <div class="section">
                 <h3>Statistics</h3>
-                <p><span class="badge">332</span> Following</p>
+                <p><span class="badge">Email</span> Following</p>
                 <p><span class="badge">124</span> Followers</p>
                 <p><span class="badge">620</span> Likes</p>
               </div>
+
               <div class="section">
                 <h3>Social</h3>
                 <ul class="list-unstyled list-social">
@@ -191,8 +239,19 @@ $username = Session::get("fullname");
                   <li><a href="#"><i class="fa fa-linkedin"></i> John grow</a></li>
                 </ul>
               </div>
+             <?php }else{ ?>
+                      <div class="section">
+                  <h3 style="color: #2dc3e8;">To see user profile, first become friend.</h3>
+              </div>
+            <?php   }  ?>
+
+            
+
+
             </div>
           </div>
+
+
           <div class="col-md-8">
               <div class="profile-info-right">
                   <ul class="nav nav-pills nav-pills-custom-minimal custom-minimal-bottom">
@@ -475,73 +534,7 @@ $username = Session::get("fullname");
       </div>
     </div>
 
-    <!-- Online users sidebar content-->
-    <div class="chat-sidebar focus">
-      <div class="list-group text-left">
-        <p class="text-center visible-xs"><a href="#" class="hide-chat btn btn-success">Hide</a></p> 
-        <p class="text-center chat-title">Online users</p>  
-        <a href="messages1.html" class="list-group-item">
-          <i class="fa fa-check-circle connected-status"></i>
-          <img src="img/Friends/guy-2.jpg" class="img-chat img-thumbnail">
-          <span class="chat-user-name">Jeferh Smith</span>
-        </a>
-        <a href="messages1.html" class="list-group-item">
-          <i class="fa fa-times-circle absent-status"></i>
-          <img src="img/Friends/woman-1.jpg" class="img-chat img-thumbnail">
-          <span class="chat-user-name">Dapibus acatar</span>
-        </a>
-        <a href="messages1.html" class="list-group-item">
-          <i class="fa fa-check-circle connected-status"></i>
-          <img src="img/Friends/guy-3.jpg" class="img-chat img-thumbnail">
-          <span class="chat-user-name">Antony andrew lobghi</span>
-        </a>
-        <a href="messages1.html" class="list-group-item">
-          <i class="fa fa-check-circle connected-status"></i>
-          <img src="img/Friends/woman-2.jpg" class="img-chat img-thumbnail">
-          <span class="chat-user-name">Maria fernanda coronel</span>
-        </a>
-        <a href="messages1.html" class="list-group-item">
-          <i class="fa fa-check-circle connected-status"></i>
-          <img src="img/Friends/guy-4.jpg" class="img-chat img-thumbnail">
-          <span class="chat-user-name">Markton contz</span>
-        </a>
-        <a href="messages1.html" class="list-group-item">
-          <i class="fa fa-times-circle absent-status"></i>
-          <img src="img/Friends/woman-3.jpg" class="img-chat img-thumbnail">
-          <span class="chat-user-name">Martha creaw</span>
-        </a>
-        <a href="messages1.html" class="list-group-item">
-          <i class="fa fa-times-circle absent-status"></i>
-          <img src="img/Friends/woman-8.jpg" class="img-chat img-thumbnail">
-          <span class="chat-user-name">Yira Cartmen</span>
-        </a>
-        <a href="messages1.html" class="list-group-item">
-          <i class="fa fa-check-circle connected-status"></i>
-          <img src="img/Friends/woman-4.jpg" class="img-chat img-thumbnail">
-          <span class="chat-user-name">Jhoanath matew</span>
-        </a>
-        <a href="messages1.html" class="list-group-item">
-          <i class="fa fa-check-circle connected-status"></i>
-          <img src="img/Friends/woman-5.jpg" class="img-chat img-thumbnail">
-          <span class="chat-user-name">Ryanah Haywofd</span>
-        </a>
-        <a href="messages1.html" class="list-group-item">
-          <i class="fa fa-check-circle connected-status"></i>
-          <img src="img/Friends/woman-9.jpg" class="img-chat img-thumbnail">
-          <span class="chat-user-name">Linda palma</span>
-        </a>
-        <a href="messages1.html" class="list-group-item">
-          <i class="fa fa-check-circle connected-status"></i>
-          <img src="img/Friends/woman-10.jpg" class="img-chat img-thumbnail">
-          <span class="chat-user-name">Andrea ramos</span>
-        </a>
-        <a href="messages1.html" class="list-group-item">
-          <i class="fa fa-check-circle connected-status"></i>
-          <img src="img/Friends/child-1.jpg" class="img-chat img-thumbnail">
-          <span class="chat-user-name">Dora ty bluekl</span>
-        </a>        
-      </div>
-    </div><!-- Online users sidebar content-->
+
 
   <?php } ?>  
     

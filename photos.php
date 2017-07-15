@@ -140,7 +140,7 @@ $ePost = new EditPost();
                 <ul class="cover-nav">
                   <li><a href="profile.php"><i class="fa fa-fw fa-bars"></i> Timeline</a></li>
                   <li ><a href="about.php"><i class="fa fa-fw fa-user"></i> About</a></li>
-                  <li><a href="friends.html"><i class="fa fa-fw fa-users"></i> Friends</a></li>
+                  <li><a href="friends.php"><i class="fa fa-fw fa-users"></i> Friends</a></li>
                   <li class="active"><a href="photos.php"><i class="fa fa-fw fa-image"></i> Photos</a></li>
                 </ul>
               </div>

@@ -4,6 +4,7 @@ Session::checkSession();
 Session::init();
 $username = Session::get("fullname");
 $userId = Session::get('userid');
+$userName = Session::get("userName");
 require_once 'lib/database.php';
 $db = new Database();
 require_once 'classes/EditProfile.php';
@@ -33,8 +34,6 @@ $edt = new EditProfile();
     <link href="assets/css/forms.css" rel="stylesheet">
     <link href="assets/css/buttons.css" rel="stylesheet">
     <link href="assets/css/edit_profile.css" rel="stylesheet">
-    <script src="assets/js/jquery.1.11.1.min.js"></script>
-    <script src="bootstrap.3.3.6/js/bootstrap.min.js"></script>
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/animate.min.css" rel="stylesheet">
     <link href="css/font-awesome.min.css" rel="stylesheet">
@@ -65,29 +64,25 @@ $edt = new EditProfile();
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
-            <li class="actives"><a href="profile.php">Profile</a></li>
+            <li class="actives"><a href="profile.php"><strong><?php echo $username; ?></strong></a></li>
             <li><a href="newsFeed.php">Home</a></li>
-            <li><a href="notifications.html"><i class="fa fa-globe"></i></a></li>
+            <li><a href="messages.php"><i class="fa fa-comments"></i></a></li>
+            <li><a href="notify.php"><i class="fa fa-globe"></i></a></li>
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                Pages <span class="caret"></span>
+                <?php echo $userName; ?> <span class="caret"></span>
               </a>
               <ul class="dropdown-menu">
-                <li><a href="#">Action</a></li>
-                <li><a href="#">Another action</a></li>
-                <li><a href="#">Something else here</a></li>
-                <li role="separator" class="divider"></li>
                 <li><a href="editProfile.php">Account Settings</a></li>
                 <li role="separator" class="divider"></li>
                 <?php 
                     if (isset($_GET['action']) && $_GET['action']=='logout') {
-                       session_destroy();
+                       Session::destroy();
                     }
                  ?>
                 <li><a href="?action=logout">Logout</a></li>
               </ul>
             </li>
-            <li><a href="#" class="nav-controller"><i class="fa fa-user"></i></a></li>
           </ul>
         </div>
       </div>
@@ -124,87 +119,44 @@ $edt = new EditProfile();
         <!-- friends -->
         <div class="panel panel-default panel-friends">
           <div class="panel-heading">
-            <a href="#" class="pull-right">View all&nbsp;<i class="fa fa-share-square-o"></i></a>
+            <a href="friends.php" class="pull-right">View all&nbsp;<i class="fa fa-share-square-o"></i></a>
             <h3 class="panel-title">Friends</h3>
           </div>
           <div class="panel-body text-center">
             <ul class="friends">
+              <?php 
+
+              $query = "SELECT user_id FROM followers WHERE follower_id = '$userId'";
+              $result = $db->select($query);
+              if ($result) {
+                foreach ($result as $friend_id) {
+                    $friend_id = $friend_id['user_id'];
+
+                    $query = "SELECT * FROM users WHERE id = '$friend_id'";
+                    $result = $db->select($query);
+                    if ($result) {
+                      foreach ($result as $value) {
+
+             ?>
+
               <li>
-                  <a href="#">
-                      <img src="img/Friends/woman-4.jpg" title="Jhoanath matew" class="img-responsive tip">
+              <?php 
+              if ($value['avatar']) { ?>
+                <a href="usersProfile.php?userId=<?php echo $value['id']; ?>&&userName=<?php echo $value['username'] ?>">
+                      <img width="108px" height="108px" src="<?php echo $value['avatar']; ?>" title="Jhoanath matew">
                   </a>
-              </li>
-              <li>
-                  <a href="#">
-                      <img src="img/Friends/woman-3.jpg" title="Martha creawn" class="img-responsive tip">
+            <?php  } else{ ?>
+            <a href="usersProfile.php?userId=<?php echo $value['id']; ?>&&userName=<?php echo $value['username'] ?>">
+                      <img width="108px" height="108px" src="img/nophoto.jpg" title="Jhoanath matew">
                   </a>
+            <?php  } ?>
+                  
               </li>
-              <li>
-                  <a href="#">
-                      <img src="img/Friends/guy-2.jpg" title="Jeferh smith" class="img-responsive tip">
-                  </a>
-              </li>
-              <li>
-                  <a href="#">
-                      <img src="img/Friends/woman-9.jpg" title="Linda palma" class="img-responsive tip">
-                  </a>
-              </li>
-              <li>
-                  <a href="#">
-                      <img src="img/Friends/guy-9.jpg" title="Lindo polmo" class="img-responsive tip">
-                  </a>
-              </li>
-              <li>
-                  <a href="#">
-                      <img src="img/Friends/guy-5.jpg" title="andrew cartson" class="img-responsive tip">
-                  </a>
-              </li>
+            <?php }}}} ?>
+
             </ul>
           </div>
         </div><!-- end friends -->
-        <!-- People You May Know -->
-        <div class="panel panel-default">
-          <div class="panel-heading">
-            <h3 class="panel-title">People You May Know</h3>
-          </div>
-          <div class="panel-body">
-            <div class="notification-row">
-              <div class="notification-padding">
-                <div class="sidebar-fa-image img-may-know">
-                  <img class="notifications" src="img/Friends/guy-2.jpg">
-                </div>
-                <div class="sidebar-fa-text">
-                  <b><a href="#">Carlos marthur</a></b><br>
-                  <a class="btn btn-info" href="#"><i class="fa fa-user-plus">Add Friend</i></a>
-                </div>
-              </div>
-            </div>
-
-            <div class="notification-row">
-              <div class="notification-padding">
-                <div class="sidebar-fa-image img-may-know">
-                  <img class="notifications" src="img/Friends/woman-1.jpg">
-                </div>
-                <div class="sidebar-fa-text">
-                  <b><a href="#">Maria gustami</a></b><br>
-                  <a class="btn btn-info" href="#"><i class="fa fa-user-plus">Add Friend</i></a>
-                </div>
-              </div>
-            </div>
-
-            <div class="notification-row">
-              <div class="notification-padding">
-                <div class="sidebar-fa-image img-may-know">
-                  <img class="notifications" src="img/Friends/woman-2.jpg">
-                </div>
-                <div class="sidebar-fa-text">
-                  <b><a href="#">Angellina mcblown</a></b><br>
-                  <a class="btn btn-info" href="#"><i class="fa fa-user-plus">Add Friend</i></a>
-                </div>
-              </div>
-            </div>            
-          </div>
-        </div><!-- End People You May Know -->
       </div><!-- end left content -->
 
       <!-- notification list-->

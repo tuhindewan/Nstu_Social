@@ -15,9 +15,74 @@ $post = new Post();
 ?>
 <?php
 if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['post'])) {
-  $getData = $post->UserSinglePost($_POST,$userId);
-}
+  if ($_FILES['postImage']['size'] == 0) {
+    $body =  $_POST['body'];
+    if (count(notify($body)) != 0) {
+      foreach (notify($body) as $key => $n) {
+        $query = "SELECT id FROM posts ORDER BY id DESC LIMIT 1";
+        $result = $db->select($query);
+        if ($result) {
+          while ($value = $result->fetch_assoc()) {
+            $postId = $value['id'];
+          }
+        }
+        $s = $userId;
+        $query = "SELECT id FROM users WHERE username = '$key'";
+        $res = $db->select($query);
+        if ($res) {
+          while ($val = $res->fetch_assoc()) {
+            $r = $val['id'];
+            if ($r != 0) {
+          $query = "INSERT INTO notifications (type,receiver,sender,datetime,post_id) VALUES ('$n','$r','$s',NOW(),'$postId')";
+          $result = $db->insert($query);
+        }
+          }
+        }
 
+        
+      }
+    }
+    $topics = getTopics($body);
+    $getData = $post->UserSinglePost($_POST,$userId,$topics);
+  }else{
+        $body =  $_POST['body'];
+        if (count(notify($body)) != 0) {
+      foreach (notify($body) as $key => $n) {
+        $query = "SELECT id FROM posts ORDER BY id DESC LIMIT 1";
+        $result = $db->select($query);
+        if ($result) {
+          while ($value = $result->fetch_assoc()) {
+            $postId = $value['id'];
+          }
+        }
+        $s = $userId;
+        $query = "SELECT id FROM users WHERE username = '$key'";
+        $res = $db->select($query);
+        if ($res) {
+          while ($val = $res->fetch_assoc()) {
+            $r = $val['id'];
+            if ($r != 0) {
+          $query = "INSERT INTO notifications (type,receiver,sender,datetime,post_id) VALUES ('$n','$r','$s',NOW(),'$postId')";
+          $result = $db->insert($query);
+        }
+          }
+        }
+
+        
+      }
+    }
+        $topics = getTopics($body);
+    $ImgPostId = $post->createImagePost($_POST,$userId,$topics);
+
+    if ($ImgPostId) {
+      while ($value = $ImgPostId->fetch_assoc()) {
+        $postImgId = $value['id'];
+      }
+    }
+    $upPostImg = $post->uploadPostImage($_FILES,$postImgId,$userId);
+  }
+  
+}
 ?>
 
 <?php 
@@ -53,6 +118,56 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['submit_comm']) ) {
   $cmntNotify = $notify->commentNotify($postId2);
   $getComment = $cmnt->createFeedComment($_POST['commentbody'],$_GET['postId2'],$userId);
   
+}
+?>
+
+<?php 
+function link_add($text) {
+$text = explode(" ", $text);
+                $newstring = "";
+
+                foreach ($text as $word) {
+                        if (substr($word, 0, 1) == "@") {
+                                $newstring .= "<a href='usersProfile.php?userName=".substr($word, 1)."'>".htmlspecialchars($word)."</a> ";
+                        } else if (substr($word, 0, 1) == "#") {
+                                $newstring .= "<a href='topics.php?topic=".substr($word, 1)."'>".htmlspecialchars($word)."</a> ";
+                        } else {
+                                $newstring .= htmlspecialchars($word)." ";
+                        }
+                }
+
+                return $newstring;
+
+}
+
+
+ ?>
+ <?php 
+function getTopics($text) {
+          $text = explode(" ", $text);
+          $topics = "";
+          foreach ($text as $word) {
+                  if (substr($word, 0, 1) == "#") {
+                          $topics .= substr($word, 1).",";
+                  }
+          }
+          return $topics;
+  }
+
+ ?>
+
+ <?php 
+ function notify($text) {
+        $text = explode(" ", $text);
+        $notify = array();
+
+        foreach ($text as $word) {
+                if (substr($word, 0, 1) == "@") {
+                        $notify[substr($word, 1)] = 1;
+                }
+        }
+
+        return $notify;
 }
 ?>
 
@@ -102,25 +217,27 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['submit_comm']) ) {
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="index-2.html"><b>NSTUSocial</b></a>
+          <a class="navbar-brand" href="home.php"><b>NSTUSocial</b></a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
-            <li class="actives"><a href="profile.php">Profile</a></li>
-            <li><a href="home.html">Home</a></li>
+            <li><a href="profile.php"><strong><?php echo $username; ?></strong></a></li>
+            <li class="active"><a href="newsFeed.php">Home</a></li>
+            <li><a href="messages.php"><i class="fa fa-comments"></i></a></li>
+            <li><a href="notify.php"><i class="fa fa-globe"></i></a></li>
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                Pages <span class="caret"></span>
+                <?php echo $userName; ?> <span class="caret"></span>
               </a>
               <ul class="dropdown-menu">
-                <li><a href="profile2.html">Profile 2</a></li>
-                <li><a href="profile3.html">Profile 3</a></li>
-                <li><a href="profile4.html">Profile 4</a></li>
-                <li><a href="sidebar_profile.html">Sidebar profile</a></li>
-                <li><a href="user_detail.html">User detail</a></li>
-                <li><a href="edit_profile.html">Edit profile</a></li>
-                <li><a href="about.html">About</a></li>
-                <li><a href="friends.html">Friends</a></li>
+                <li><a href="editProfile.php">Account Settings</a></li>
+                <li role="separator" class="divider"></li>
+                <?php 
+                    if (isset($_GET['action']) && $_GET['action']=='logout') {
+                       Session::destroy();
+                    }
+                 ?>
+                <li><a href="?action=logout">Logout</a></li>
               </ul>
             </li>
           </ul>
@@ -147,27 +264,14 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['submit_comm']) ) {
                 <ul class="nav nav-pills nav-stacked">
                   <li class="active"><a href="#"> <i class="fa fa-user"></i> News feed</a></li>
                   <li>
-                    <a href="#"> 
+                    <a href="messages.php"> 
                       <i class="fa fa-envelope"></i> Messages 
                       <span class="label label-info pull-right r-activity">9</span>
                     </a>
                   </li>
-                  <li><a href="#"> <i class="fa fa-calendar"></i> Events</a></li>
-                  <li><a href="#"> <i class="fa fa-image"></i> Photos</a></li>
-                  <li><a href="#"> <i class="fa fa-share"></i> Browse</a></li>
-                  <li><a href="#"> <i class="fa fa-floppy-o"></i> Saved</a></li>
-                </ul>
-              </div>
-            </div>
-
-            <div class="widget">
-              <div class="widget-body">
-                <ul class="nav nav-pills nav-stacked">
-                  <li><a href="#"> <i class="fa fa-globe"></i> Pages</a></li>
-                  <li><a href="#"> <i class="fa fa-gamepad"></i> Games</a></li>
-                  <li><a href="#"> <i class="fa fa-puzzle-piece"></i> Ads</a></li>
-                  <li><a href="#"> <i class="fa fa-home"></i> Markerplace</a></li>
-                  <li><a href="#"> <i class="fa fa-users"></i> Groups</a></li>
+                  <li><a href="friends.php"> <i class="fa fa-calendar"></i> Friends</a></li>
+                  <li><a href="usersList.php"> <i class="fa fa-users"></i> Find Friends</a></li>
+                  <li><a href="photos.php"> <i class="fa fa-image"></i> Photos</a></li>
                 </ul>
               </div>
             </div>
@@ -187,15 +291,14 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['submit_comm']) ) {
                   echo $getData;
                 } ?>
                   <div class="box profile-info n-border-top">
-                    <form action="" method="POST">
+                    <form action="" method="POST" enctype="multipart/form-data">
                         <textarea class="form-control input-lg p-text-area" rows="2" placeholder="Whats in your mind today?" name="body"></textarea>
                         <div class="box-footer box-form">
-                        <button type="submit" class="btn btn-azure pull-right" name="post">Post</button>
                         <ul class="nav nav-pills">
-                            <li><a href="#"><i class="fa fa-map-marker"></i></a></li>
-                            <li><a href="#"><i class="fa fa-camera"></i></a></li>
-                            <li><a href="#"><i class=" fa fa-film"></i></a></li>
-                            <li><a href="#"><i class="fa fa-microphone"></i></a></li>
+                          <li>
+                          <span class="file-input btn btn-azure btn-file btn-sm"><i class="fa fa-camera"></i><input type="file" multiple="" name="postImage"></span>
+                          </li>
+                          <li class="pull-right"><button type="submit" class="btn btn-azure" name="post">Post</button></li>
                         </ul>
                     </div>
                     </form>
@@ -226,21 +329,20 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['submit_comm']) ) {
                       <?php } ?>
                         
 
-                        <span class="username"><a href="#"><?php echo $value["fullName"]; ?></a></span>
+                        <span class="username"><a href=""><?php echo $value["fullName"]; ?></a></span>
                         <span class="description">Shared publicly - <?php echo  date("M j, Y h:ia",strtotime($value['posted_at'])) ; ?></span>
                       </div>
                     </div>
 
                     <div class="box-body" style="display: block;">
                       <p>
-                        <?php echo $value["body"]; ?>
+                        <?php echo link_add($value["body"]); ?>
                       </p>
                       <?php
 
                       if ($value["postImage"]) { ?>
                         <img class="img-responsive show-in-modal" src="<?php echo $value["postImage"]; ?>" alt="Photo">
                    <?php   } ?>
-                      <button type="button" class="btn btn-default btn-xs"><i class="fa fa-share"></i> Share</button>
                       <form action="newsFeed.php?postId=<?php echo $value["id"]; ?>" method="POST">
                         <button type="submit" class="btn btn-default btn-xs" name="like"><i class="fa fa-thumbs-o-up"></i> Like</button>
                       </form>
@@ -255,10 +357,16 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['submit_comm']) ) {
                      ?>
                     <div class="box-footer box-comments" style="display: block;">
                       <div class="box-comment">
-                        <img class="img-circle img-sm" src="img/Friends/guy-3.jpg" alt="User Image">
+                      <?php 
+                      if ($value['avatar']) { ?>
+                        <img class="img-circle img-sm" src="<?php echo $value['avatar']; ?>" alt="User Image">
+                    <?php  }else{?>
+                        <img class="img-circle img-sm" src="img/nophoto.jpg" alt="User Image">
+                  <?php }     ?>
+
                         <div class="comment-text">
                           <span class="username">
-                          <?php echo $value['fullName']; ?>
+                          <a href="usersProfile.php?userId=<?php echo $value['id']; ?>&&userName=<?php echo $value['username'] ?>"><?php echo $value['fullName']; ?></a>
                           <span class="text-muted pull-right"><?php echo  date("M j, Y h:ia",strtotime($value['posted_at'])) ; ?></span>
                           </span>
                           <?php echo $value['comment']; ?>
@@ -273,7 +381,6 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['submit_comm']) ) {
 
                     <div class="box-footer" style="display: block;">
                       <form action="newsFeed.php?postId2=<?php echo $value["id"]; ?>" method="POST" id="my_form">
-                        <img class="img-responsive img-circle img-sm" src="img/Friends/guy-3.jpg" alt="Alt Text">
                         <div class="img-push">
                           <input name="commentbody" id="comment" type="text" class="form-control input-sm" placeholder="Press enter to post comment">
                           <input type="submit" name="submit_comm" style="position: absolute; left: -9999px; width: 1px; height: 1px;"tabindex="-1" />
@@ -295,7 +402,7 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['submit_comm']) ) {
 
                       <img class="img-circle" src="img/nophoto.jpg" alt="User Image">
                       <?php } ?>
-                        <span class="username"><a href="#"><?php echo $value["fullName"]; ?></a></span>
+                        <span class="username"><a href=""><?php echo $value["fullName"]; ?></a></span>
                         <span class="description">Shared publicly - <?php echo  date("M j, Y h:ia",strtotime($value['posted_at'])) ; ?></span>
                       </div>
                     </div>
@@ -310,16 +417,15 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['submit_comm']) ) {
                       if ($value["postImage"]) { ?>
                         <img class="img-responsive show-in-modal" src="<?php echo $value["postImage"]; ?>" alt="Photo">
                    <?php   } ?>
-                      <button type="button" class="btn btn-default btn-xs"><i class="fa fa-share"></i> Share</button>
                       <form action="newsFeed.php?postId=<?php echo $value["id"]; ?>" method="POST">
-                        <button type="submit" class="btn btn-default btn-xs" name="unlike"><i class="fa fa-thumbs-o-up"></i> unLike</button>
+                        <button type="submit" class="btn btn-default btn-xs" name="unlike"><i class="fa fa-thumbs-o-up"></i> Unlike</button>
                       </form>
                       <span class="pull-right text-muted"><?php echo $value["likes"]; ?> likes - 3 comments</span>
                     </div>
 
                     <?php 
 
-                    $getcmt = $cmnt->displayComments($postId);
+                    $getcmt = $cmnt->displayFeedComments($postId);
                       if ($getcmt) {
                         while ($value=$getcmt->fetch_assoc()) {
                       
@@ -328,10 +434,15 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['submit_comm']) ) {
                     <div class="box-footer box-comments" style="display: block;">
 
                       <div class="box-comment">
-                        <img class="img-circle img-sm" src="img/Friends/guy-3.jpg" alt="User Image">
+                      <?php 
+                      if ($value['avatar']) { ?>
+                        <img class="img-circle img-sm" src="<?php echo $value['avatar']; ?>" alt="User Image">
+                    <?php  }else{?>
+                        <img class="img-circle img-sm" src="img/nophoto.jpg" alt="User Image">
+                  <?php }     ?>
                         <div class="comment-text">
                           <span class="username">
-                          <?php echo $value['fullName']; ?>
+                          <a href="usersProfile.php?userId=<?php echo $value['id']; ?>&&userName=<?php echo $value['username'] ?>"><?php echo $value['fullName']; ?></a>
                           <span class="text-muted pull-right"><?php echo  date("M j, Y h:ia",strtotime($value['posted_at'])) ; ?></span>
                           </span>
                           <?php echo $value['comment']; ?>
@@ -345,8 +456,7 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['submit_comm']) ) {
                         echo $getComment;
                       } ?>
                     <div class="box-footer" style="display: block;">
-                      <form action="newsFeed.php?postId2=<?php echo $value["id"]; ?>" method="POST" id="my_form">
-                        <img class="img-responsive img-circle img-sm" src="img/Friends/guy-3.jpg" alt="Alt Text">
+                      <form action="newsFeed.php?postId2=<?php echo $value["id"]; ?>" method="POST" id="my_form">>
                         <div class="img-push">
                           <input name="commentbody" id="comment" type="text" class="form-control input-sm" placeholder="Press enter to post comment">
                           <input type="submit" name="submit_comm" style="position: absolute; left: -9999px; width: 1px; height: 1px;"tabindex="-1" />
@@ -377,54 +487,50 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['submit_comm']) ) {
               <div class="card">
                   <div class="content">
                       <ul class="list-unstyled team-members">
+                      <?php 
+
+                        $query = "SELECT user_id FROM followers WHERE follower_id != '$userId'";
+                        $result = $db->select($query);
+                        if ($result) {
+                        foreach ($result as $friend_id) {
+                            $friend_id = $friend_id['user_id'];
+                            if ($userId!=$friend_id) {
+
+
+                            $query = "SELECT * FROM users WHERE id = '$friend_id' ORDER BY id DESC LIMIT 5";
+                            $result = $db->select($query);
+                            if ($result) {
+                              foreach ($result as $value) {
+
+           
+                     ?>
+
+
                           <li>
                               <div class="row">
                                   <div class="col-xs-3">
+                                   <?php if ($value['avatar']) { ?>
                                       <div class="avatar">
-                                          <img src="img/Friends/guy-2.jpg" alt="Circle Image" class="img-circle img-no-padding img-responsive">
+                                          <img src="<?php echo $value['avatar']; ?>" alt="Circle Image" class="img-circle img-no-padding img-responsive">
                                       </div>
+                                    <?php }else{ ?>
+                                    <div class="avatar">
+                                          <img src="img/nophoto.jpg" alt="Circle Image" class="img-circle img-no-padding img-responsive">
+                                      </div>
+                                    <?php   }   ?>
                                   </div>
                                   <div class="col-xs-6">
-                                     Carlos marthur
+                                     <a href="usersProfile.php?userId=<?php echo $value['id']; ?>&&userName=<?php echo $value['username'] ?>"><?php echo $value['fullName']; ?></a>
+                                     <p><small><?php echo $value['username']; ?></small></p>
                                   </div>
                       
                                   <div class="col-xs-3 text-right">
-                                      <btn class="btn btn-sm btn-azure btn-icon"><i class="fa fa-user-plus"></i></btn>
+                                      <a href="usersList.php"><btn class="btn btn-sm btn-azure btn-icon"><i class="fa fa-user-plus"></i></btn></a>
                                   </div>
                               </div>
                           </li>
-                          <li>
-                              <div class="row">
-                                  <div class="col-xs-3">
-                                      <div class="avatar">
-                                          <img src="img/Friends/woman-1.jpg" alt="Circle Image" class="img-circle img-no-padding img-responsive">
-                                      </div>
-                                  </div>
-                                  <div class="col-xs-6">
-                                      Maria gustami
-                                  </div>
-                      
-                                  <div class="col-xs-3 text-right">
-                                      <btn class="btn btn-sm btn-azure btn-icon"><i class="fa fa-user-plus"></i></btn>
-                                  </div>
-                              </div>
-                          </li>
-                          <li>
-                              <div class="row">
-                                  <div class="col-xs-3">
-                                      <div class="avatar">
-                                          <img src="img/Friends/woman-2.jpg" alt="Circle Image" class="img-circle img-no-padding img-responsive">
-                                      </div>
-                                  </div>
-                                  <div class="col-xs-6">
-                                      Angellina mcblown
-                                  </div>
-                      
-                                  <div class="col-xs-3 text-right">
-                                      <btn class="btn btn-sm btn-azure btn-icon"><i class="fa fa-user-plus"></i></btn>
-                                  </div>
-                              </div>
-                          </li>
+                    <?php }}}} }?>
+
                       </ul>
                   </div>
               </div>
@@ -432,76 +538,6 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['submit_comm']) ) {
             </div>
           </div><!-- End people yout may know --> 
 
-                    <!-- Friends activity -->
-          <div class="widget">
-            <div class="widget-header">
-              <h3 class="widget-caption">Friends activity</h3>
-            </div>
-            <div class="widget-body bordered-top bordered-sky">
-              <div class="card">
-                <div class="content">
-                   <ul class="list-unstyled team-members">
-                    <li>
-                      <div class="row">
-                        <div class="col-xs-3">
-                          <div class="avatar">
-                              <img src="img/Friends/woman-2.jpg" alt="img" class="img-circle img-no-padding img-responsive">
-                          </div>
-                        </div>
-                        <div class="col-xs-9">
-                          <b><a href="#">Hillary Markston</a></b> shared a 
-                          <b><a href="#">publication</a></b>. 
-                          <span class="timeago" >5 min ago</span>
-                        </div>
-                      </div>
-                    </li>
-                    <li>
-                      <div class="row">
-                        <div class="col-xs-3">
-                          <div class="avatar">
-                              <img src="img/Friends/woman-3.jpg" alt="Circle Image" class="img-circle img-no-padding img-responsive">
-                          </div>
-                        </div>
-                        <div class="col-xs-9">
-                          <b><a href="#">Leidy marshel</a></b> shared a 
-                          <b><a href="#">publication</a></b>. 
-                          <span class="timeago" >5 min ago</span>
-                        </div>
-                      </div>
-                    </li>
-                    <li>
-                      <div class="row">
-                        <div class="col-xs-3">
-                          <div class="avatar">
-                              <img src="img/Friends/woman-4.jpg" alt="Circle Image" class="img-circle img-no-padding img-responsive">
-                          </div>
-                        </div>
-                        <div class="col-xs-9">
-                          <b><a href="#">Presilla bo</a></b> shared a 
-                          <b><a href="#">publication</a></b>. 
-                          <span class="timeago" >5 min ago</span>
-                        </div>
-                      </div>
-                    </li>
-                    <li>
-                      <div class="row">
-                        <div class="col-xs-3">
-                            <div class="avatar">
-                                <img src="img/Friends/woman-4.jpg" alt="Circle Image" class="img-circle img-no-padding img-responsive">
-                            </div>
-                        </div>
-                        <div class="col-xs-9">
-                          <b><a href="#">Martha markguy</a></b> shared a 
-                          <b><a href="#">publication</a></b>. 
-                          <span class="timeago" >5 min ago</span>
-                        </div>
-                      </div>
-                    </li>
-                  </ul>         
-                </div>
-              </div>
-            </div>
-          </div><!-- End Friends activity -->
 
         </div><!-- end right posts -->
       </div>
@@ -522,6 +558,11 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['submit_comm']) ) {
           ga('require', 'linker');
           ga('linker:autoLink', ['bootdey.com','www.bootdey.com','demos.bootdey.com'] );
           ga('send', 'pageview');
+
+          $(document).ready(function($){
+              var url = window.location.href;
+              $('.nav li a[href="'+url+'"]').addClass('active');
+          });
       </script>
   </body>
 

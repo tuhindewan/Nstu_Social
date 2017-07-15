@@ -118,6 +118,12 @@ class Information
          }
   }
 
+  public  function getUserAbout($userNameId){
+    $query = "SELECT * FROM user_information WHERE userId = '$userNameId'";
+    $result = $this->db->select($query);
+    return $result;
+  }
+
 
 }
 

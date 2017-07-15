@@ -8,6 +8,8 @@ $db = new Database();
 $userId = Session::get("userid");
 $username = Session::get("fullname");
 $userName = Session::get("userName");
+$avatar = Session::get("avatar");
+
 ?>
 <?php
 require_once 'classes/Post.php';
@@ -374,8 +376,6 @@ $info = new Information();
                                 $result = $db->select($query);
                                 if ($result) {
                                   foreach ($result as $value) {
-
-               
                          ?>
                     <li>
                     <?php 
@@ -464,13 +464,22 @@ $info = new Information();
 
                              ?>
                               <li><a href="profile.php?delPost=<?php echo $value["id"];?>">  <i class="fa fa-trash" aria-hidden="true"></i> Delete This Post  </a></li>
-                              <li class="divider"></li>
-                              <li><a href="#">Unfollow Antonius</a></li>
-                              <li class="divider"></li>
-                              <li><a href="#">Get Notification</a></li>
                           </ul>
                       </div>
-                        <img class="img-circle" src="img/Friends/guy-3.jpg" alt="User Image">
+                      <?php
+                       $getProImage = $edt->getProfileImage($userId);
+                       if ($getProImage) {
+                         while ($proImage = $getProImage->fetch_assoc()) {
+
+                       ?>
+                       <?php 
+                        if ($proImage['avatar']) { ?>
+                          <img class="img-circle" src="<?php echo $proImage['avatar']; ?>" alt="User Image">
+                       <?php }else{?>
+                        <img class="img-circle" src="img/nophoto.jpg" alt="User Image">
+                     <?php }   ?>
+                        
+                          <?php }} ?>
                         <span class="username"><a href="#"><?php echo $username ?></a></span>
                         <span class="description">Shared publicly - <?php echo  date("M j, Y h:ia",strtotime($value['posted_at'])) ; ?></span>
 
@@ -501,7 +510,13 @@ $info = new Information();
                      ?>
                     <div class="box-footer box-comments" style="display: block;">
                       <div class="box-comment">
-                        <img class="img-circle img-sm" src="img/Friends/guy-3.jpg" alt="User Image">
+                      <?php 
+                        if ($value['avatar']) { ?>
+                          <img class="img-circle img-sm" src="<?php echo $value['avatar']; ?>" alt="User Image">
+                      <?php  }else{?>
+                        <img class="img-circle img-sm" src="img/nophoto.jpg" alt="User Image">
+                   <?php  }   ?>
+
                         <div class="comment-text">
                           <span class="username">
                           <?php echo $value['fullName']; ?>
@@ -517,7 +532,6 @@ $info = new Information();
                       } ?>
                     <div class="box-footer" style="display: block;">
                       <form action="profile.php?postId2=<?php echo $value['id']; ?>" method="POST" id="my_form">
-                        <img class="img-responsive img-circle img-sm" src="img/Friends/guy-3.jpg" alt="Alt Text">
                         <div class="img-push">
                           <input name="commentbody" id="comment" type="text" class="form-control input-sm" placeholder="Press enter to post comment">
                           <input type="submit" name="submit_comm" style="position: absolute; left: -9999px; width: 1px; height: 1px;"tabindex="-1" />
@@ -544,13 +558,22 @@ $info = new Information();
 
                              ?>
                               <li><a href="profile.php?delPost=<?php echo $value["id"];?>">  <i class="fa fa-trash" aria-hidden="true"></i> Delete This Post  </a></li>
-                              <li class="divider"></li>
-                              <li><a href="#">Unfollow Antonius</a></li>
-                              <li class="divider"></li>
-                              <li><a href="#">Get Notification</a></li>
                           </ul>
                       </div>
-                        <img class="img-circle" src="img/Friends/guy-3.jpg" alt="User Image">
+                        <?php
+                       $getProImage = $edt->getProfileImage($userId);
+                       if ($getProImage) {
+                         while ($proImage = $getProImage->fetch_assoc()) {
+
+                       ?>
+                       <?php 
+                        if ($proImage['avatar']) { ?>
+                          <img class="img-circle" src="<?php echo $proImage['avatar']; ?>" alt="User Image">
+                       <?php }else{?>
+                        <img class="img-circle" src="img/nophoto.jpg" alt="User Image">
+                     <?php }   ?>
+                        
+                          <?php }} ?>
                         <span class="username"><a href="#"><?php echo $username ?></a></span>
                         <span class="description">Shared publicly - <?php echo  date("M j, Y h:ia",strtotime($value['posted_at'])) ; ?></span>
                       </div>
@@ -566,7 +589,7 @@ $info = new Information();
                         <img class="img-responsive show-in-modal" src="<?php echo $value["postImage"]; ?>" alt="Photo">
                    <?php  } ?>
                       <form action="profile.php?postId=<?php echo $value["id"]; ?>" method="POST">
-                        <button type="submit" class="btn btn-default btn-xs" name="unlike"><i class="fa fa-thumbs-o-up"></i> unLike</button>
+                        <button type="submit" class="btn btn-default btn-xs" name="unlike"><i class="fa fa-thumbs-o-up"></i> Unlike</button>
                       </form>
                       <span class="pull-right text-muted"><?php echo $value["likes"]; ?> likes - 3 comments</span>
                     </div>
@@ -581,7 +604,12 @@ $info = new Information();
                     <div class="box-footer box-comments" style="display: block;">
 
                       <div class="box-comment">
-                        <img class="img-circle img-sm" src="img/Friends/guy-3.jpg" alt="User Image">
+                        <?php 
+                        if ($value['avatar']) { ?>
+                          <img class="img-circle img-sm" src="<?php echo $value['avatar']; ?>" alt="User Image">
+                      <?php  }else{?>
+                        <img class="img-circle img-sm" src="img/nophoto.jpg" alt="User Image">
+                   <?php  }   ?>
                         <div class="comment-text">
                           <span class="username">
                           <?php echo $value['fullName']; ?>
@@ -599,7 +627,6 @@ $info = new Information();
                       } ?>
                     <div class="box-footer" style="display: block;">
                       <form action="profile.php?postId2=<?php echo $value['id']; ?>" method="POST" id="my_form">
-                        <img class="img-responsive img-circle img-sm" src="img/Friends/guy-3.jpg" alt="Alt Text">
                         <div class="img-push">
                           <input name="commentbody" id="comment" type="text" class="form-control input-sm" placeholder="Press enter to post comment">
                           <input type="submit" name="submit_comm" style="position: absolute; left: -9999px; width: 1px; height: 1px;"tabindex="-1" />

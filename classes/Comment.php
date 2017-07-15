@@ -45,7 +45,7 @@ class Comment
 
 	public function displayComments($postId){
 
-		$query = "SELECT comments.comment,comments.posted_at,comments.post_id, users.fullName FROM comments, users WHERE post_id = '$postId' AND comments.user_id = users.id";
+		$query = "SELECT comments.comment,comments.posted_at,comments.post_id, users.fullName,users.avatar FROM comments, users WHERE post_id = '$postId' AND comments.user_id = users.id";
 		$result = $this->db->select($query);
 		return $result;
 	}
@@ -80,7 +80,7 @@ class Comment
 
 	public function displayFeedComments($postId){
 
-		$query = "SELECT comments.comment,comments.posted_at,comments.post_id, users.fullName FROM comments, users WHERE post_id = '$postId' AND comments.user_id = users.id";
+		$query = "SELECT comments.comment,comments.posted_at,comments.post_id, users.fullName,users.avatar,users.id,users.username FROM comments, users WHERE post_id = '$postId' AND comments.user_id = users.id";
 		$result = $this->db->select($query);
 		return $result;
 	}

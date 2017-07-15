@@ -66,49 +66,39 @@ class EditProfile
 
 	public function changeAvatar($file,$userId){
 
-		if (empty($_FILES['avatar']['name'])) {
-                $msg = "<div class='alert alert-danger' role='alert'>Please choose an image first for your Avatar.</div>";
+		$permited  = array('jpg', 'jpeg', 'png', 'gif');
+        $file_name = $_FILES['avatar']['name'];
+        $file_size = $_FILES['avatar']['size'];
+        $file_temp = $_FILES['avatar']['tmp_name'];
+
+        $div = explode('.', $file_name);
+	    $file_ext = strtolower(end($div));
+	    $unique_image = substr(md5(time()), 0, 10).'.'.$file_ext;
+	    $uploaded_image = "Avatars/".$unique_image;
+
+	    if (empty($file_name)) {
+      		 $msg = "<div class='alert alert-danger' role='alert'>Please choose an image first for your Cover.</div>";
+				return $msg;;
+      }elseif ($file_size >10240000) {
+       		$msg = "<div class='alert alert-danger' role='alert'>Image Size should be 10MB or less then 10MB!</div>";
 				return $msg;
-        }
-        $permited  = array('jpg', 'jpeg', 'png', 'gif');
-        $div = explode('.', $_FILES['avatar']['name']);
-        $file_ext = strtolower(end($div));
-
-        if (in_array($file_ext, $permited) === false) {
-          $msg = "<div class='alert alert-danger' role='alert'>You can upload only JPG,JPEG,PNG or GIF file!</div>";
+      } elseif (in_array($file_ext, $permited) === false) {
+      		$msg = "<div class='alert alert-danger' role='alert'>You can upload only JPG,JPEG,PNG or GIF file!</div>";
 				return $msg;
-          }
-		  $image = base64_encode(file_get_contents($_FILES['avatar']['tmp_name']));
-          $options = array('http'=>array(
-                  'method'=>"POST",
-                  'header'=>"Authorization: Bearer 52a3c0e5a21348520610dfe36d3f6fd8a23c2ce5\n".
-                  "Content-Type: application/x-www-form-urlencoded",
-                  'content'=>$image
-          ));
-          $context = stream_context_create($options);
-          $imgurURL = "https://api.imgur.com/3/image";
-          
-
-        if ($_FILES['avatar']['size'] > 10240000) {
-                $msg = "<div class='alert alert-danger' role='alert'>Image Size should be 10MB or less then 10MB!</div>";
+      } else{
+      move_uploaded_file($file_temp, $uploaded_image);
+      $query = "UPDATE users set avatar = '$uploaded_image' WHERE id= '$userId'";
+      $update_rows = $this->db->update($query);
+      if ($update_rows) {
+       		$msg = "<div class='alert alert-success' role='alert'>You have successfully Changed Cover!!</div>";
 				return $msg;
-        }
 
-          $response = file_get_contents($imgurURL, false, $context);
-          $response = json_decode($response);
+      }else {
+   			$msg = "<div class='alert alert-danger' role='alert'>Something Went wrong.Please choose image properly!!</div>";
+			return $msg;
 
-          $avatar = $response->data->link;
-
-          $query = "UPDATE users set avatar = '$avatar' WHERE id= '$userId'";
-          $updateRow = $this->db->update($query);
-
-          if ($updateRow) {
-				$msg = "<div class='alert alert-success' role='alert'>You have successfully changed your Avatar!!</div>";
-				return $msg;
-			}else{
-				$msg = "<div class='alert alert-danger' role='alert'>Something Went wrong.Please choose image properly!!</div>";
-				return $msg;
-			}
+     }   
+     }
 
 	}
 
@@ -120,9 +110,9 @@ class EditProfile
 
 	public function changeCover($file,$userId){
 		$permited  = array('jpg', 'jpeg', 'png', 'gif');
-      $file_name = $_FILES['cover']['name'];
-      $file_size = $_FILES['cover']['size'];
-      $file_temp = $_FILES['cover']['tmp_name'];
+        $file_name = $_FILES['cover']['name'];
+        $file_size = $_FILES['cover']['size'];
+        $file_temp = $_FILES['cover']['tmp_name'];
 
 
       $div = explode('.', $file_name);

@@ -24,7 +24,7 @@ $db = new Database();
     <meta name="keywords" content="">
     <meta name="author" content="">
     <link rel="icon" href="img/favicon.png">
-    <title>Day-Day</title>
+    <title>NSTUSocial | A Social Communication Site for NSTU</title>
     <!-- Bootstrap core CSS -->
     <link href="bootstrap.3.3.6/css/bootstrap.min.css" rel="stylesheet">
     <link href="font-awesome.4.6.1/css/font-awesome.min.css" rel="stylesheet">
@@ -104,22 +104,27 @@ $db = new Database();
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="index-2.html"><b>NSTUSocial</b></a>
+          <a class="navbar-brand" href="home.php"><b>NSTUSocial</b></a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
-            <li class="actives"><a href="profile.php">Profile</a></li>
+            <li class="actives"><a href="profile.php"><strong><?php echo $username; ?></strong></a></li>
             <li><a href="newsFeed.php">Home</a></li>
+            <li><a href="messages.php"><i class="fa fa-comments"></i></a></li>
+            <li><a href="notify.php"><i class="fa fa-globe"></i></a></li>
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                Pages <span class="caret"></span>
+                <?php echo $userName; ?> <span class="caret"></span>
               </a>
               <ul class="dropdown-menu">
-                <li><a href="profile2.html">Profile 2</a></li>
-                <li><a href="profile3.html">Profile 3</a></li>
-                <li><a href="profile4.html">Profile 4</a></li>
-                <li><a href="sidebar_profile.html">Sidebar profile</a></li>
-                <li><a href="user_detail.html">User detail</a></li>
+                <li><a href="editProfile.php">Account Settings</a></li>
+                <li role="separator" class="divider"></li>
+                <?php 
+                    if (isset($_GET['action']) && $_GET['action']=='logout') {
+                       Session::destroy();
+                    }
+                 ?>
+                <li><a href="?action=logout">Logout</a></li>
               </ul>
             </li>
           </ul>
@@ -140,17 +145,24 @@ $db = new Database();
 
       <ul id="myUL">
           <div class="row friends" style="margin-top: 20px;">
-
+          <div class="col-md-8">
           <?php 
-
-          $query = "SELECT * FROM users WHERE id != '$userId' AND username != '$userName'";
+          $query = "SELECT * FROM followers WHERE follower_id != '$userId'";
           $result = $db->select($query);
           if ($result) {
-            while ($value = $result->fetch_assoc()) {
-              
+            foreach ($result as  $friend_id) {
+              $friend_id = $friend_id['user_id'];
+
+          $query = "SELECT * FROM users WHERE id = '$friend_id' AND id != '$userId' ORDER BY id DESC ";
+          $result = $db->select($query);
+                    if ($result) {
+            foreach ($result as  $value){
+
+
+  
           ?>
 
-          <div class="col-md-8">
+
             <li>
               <div class="panel panel-default">
                 <div class="panel-heading">
@@ -175,9 +187,9 @@ $db = new Database();
                 </div>
               </div>
             </li>
-          </div>
-<?php }} ?>
 
+<?php }} }}?>
+          </div>
       </div>
       </ul>
 
