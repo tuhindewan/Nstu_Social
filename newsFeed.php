@@ -185,7 +185,7 @@ function getTopics($text) {
     <meta name="description" content="">
     <meta name="keywords" content="">
     <meta name="author" content="">
-    <link rel="icon" href="img/favicon.png">
+    <link rel="icon" href="img/nstu.png">
     <title>NSTUSocial</title>
     <!-- Bootstrap core CSS -->
     <link href="bootstrap.3.3.6/css/bootstrap.min.css" rel="stylesheet">
@@ -254,9 +254,27 @@ function getTopics($text) {
             <div class="widget">
               <div class="widget-body">
                 <div class="user-heading round">
-                  <a href="#">
-                      <img src="img/Friends/guy-3.jpg" alt="">
+
+                <?php 
+                $query = "SELECT * FROM users WHERE id = '$userId'";
+                $result = $db->select($query);
+                if ($result) {
+                    foreach ($result as  $value) {
+
+                 ?>
+                 <?php 
+                 if ($value['avatar']) { ?>
+                   <a href="#">
+                      <img src="<?php echo $value['avatar']; ?>" alt="">
                   </a>
+                <?php }else{ ?>
+                  <a href="#">
+                      <img src="img/nophoto.jpg" alt="">
+                  </a>
+              <?php  }   ?>
+
+
+                <?php }} ?>
                   <h1><?php echo $username ?></h1>
                   <p>@<?php echo $userName ?></p>
                 </div>
@@ -266,7 +284,7 @@ function getTopics($text) {
                   <li>
                     <a href="messages.php"> 
                       <i class="fa fa-envelope"></i> Messages 
-                      <span class="label label-info pull-right r-activity">9</span>
+                      <span class="label label-info pull-right r-activity"></span>
                     </a>
                   </li>
                   <li><a href="friends.php"> <i class="fa fa-calendar"></i> Friends</a></li>
@@ -304,7 +322,9 @@ function getTopics($text) {
                     </form>
                   </div><!-- end post state form -->
                   <!-- end post state form -->
-
+                      <?php if (isset($getComment)) {
+                        echo $getComment;
+                      } ?>
                   <!--  posts -->
                   <?php 
 
@@ -346,7 +366,7 @@ function getTopics($text) {
                       <form action="newsFeed.php?postId=<?php echo $value["id"]; ?>" method="POST">
                         <button type="submit" class="btn btn-default btn-xs" name="like"><i class="fa fa-thumbs-o-up"></i> Like</button>
                       </form>
-                      <span class="pull-right text-muted"><?php echo $value["likes"]; ?> likes - 3 comments</span>
+                      <span class="pull-right text-muted"><?php echo $value["likes"]; ?> likes </span>
                     </div>
                     <?php 
 
@@ -374,9 +394,7 @@ function getTopics($text) {
                       </div>
                     </div>
                     <?php }} ?>
-                      <?php if (isset($getComment)) {
-                        echo $getComment;
-                      } ?>
+
 
 
                     <div class="box-footer" style="display: block;">
@@ -420,7 +438,7 @@ function getTopics($text) {
                       <form action="newsFeed.php?postId=<?php echo $value["id"]; ?>" method="POST">
                         <button type="submit" class="btn btn-default btn-xs" name="unlike"><i class="fa fa-thumbs-o-up"></i> Unlike</button>
                       </form>
-                      <span class="pull-right text-muted"><?php echo $value["likes"]; ?> likes - 3 comments</span>
+                      <span class="pull-right text-muted"><?php echo $value["likes"]; ?> likes </span>
                     </div>
 
                     <?php 

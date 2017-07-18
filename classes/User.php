@@ -98,6 +98,12 @@ class User
  	}
 }
 
+public function getUserInformation($userNameId){
+	$query = "SELECT * FROM users WHERE id = '$userNameId'";
+	$result = $this->db->select($query);
+	return $result;
+}
+
 }
 
 ?>

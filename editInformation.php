@@ -217,7 +217,6 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['updateinfo'])) {
                               <div class="form-group">
                                 <label for="exampleInputEmail1">Gender</label>
                                   <select class="form-control" name="gender" >
-                                    <option>Please select your gender</option>
                                     <option  value="Male">Male</option>
                                     <option  value="Female">Female</option>
                                   </select>
@@ -226,7 +225,6 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['updateinfo'])) {
                             <div class="form-group">
                               <label>Department</label>
                                   <select class="form-control" name="department">
-                                  <option value="0">Please select your department</option>
                                     <option value="Computer Science and Telecommunication Engineering">Computer Science and Telecommunication Engineering</option>
                                     <option value="Applied Chemistry and Chemical Engineering">Applied Chemistry and Chemical Engineering</option>
                                     <option value="Information and Communication Engineering">Information and Communication Engineering</option>
@@ -235,7 +233,6 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['updateinfo'])) {
                             <div class="form-group">
                               <label>Session</label>
                                   <select class="form-control" name="session">
-                                  <option value="0">Please select your session</option>
                                     <option value="2011-12">2011-12</option>
                                     <option value="2012-13">2012-13</option>
                                     <option value="2013-14">2013-14</option>
@@ -244,7 +241,6 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['updateinfo'])) {
                            <div class="form-group">
                               <label>Status</label>
                                   <select class="form-control" name="status">
-                                  <option value="0">Please select your status</option>
                                     <option value="Sudent" >Sudent</option>
                                     <option value="Alumni">Alumni</option>
                                     <option value="Lecturer">Lecturer</option>

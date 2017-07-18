@@ -435,6 +435,9 @@ $info = new Information();
                   <?php if (isset($dPost)) {
                     echo $dPost;
                   } ?>
+                     <?php if (isset($getComment)) {
+                        echo $getComment;
+                      } ?>
 
                   <!--  posts -->
                   <?php
@@ -499,7 +502,7 @@ $info = new Information();
                       <form action="profile.php?postId=<?php echo $value["id"]; ?>" method="POST">
                         <button type="submit" class="btn btn-default btn-xs" name="like"><i class="fa fa-thumbs-o-up"></i> Like</button>
                       </form>
-                      <span class="pull-right text-muted"><?php echo $value["likes"]; ?> likes - 3 comments</span>
+                      <span class="pull-right text-muted"><?php echo $value["likes"]; ?> likes </span>
                     </div>
                     <?php 
 
@@ -527,9 +530,7 @@ $info = new Information();
                       </div>
                     </div>
                     <?php }} ?>
-                      <?php if (isset($getComment)) {
-                        echo $getComment;
-                      } ?>
+
                     <div class="box-footer" style="display: block;">
                       <form action="profile.php?postId2=<?php echo $value['id']; ?>" method="POST" id="my_form">
                         <div class="img-push">
@@ -591,7 +592,7 @@ $info = new Information();
                       <form action="profile.php?postId=<?php echo $value["id"]; ?>" method="POST">
                         <button type="submit" class="btn btn-default btn-xs" name="unlike"><i class="fa fa-thumbs-o-up"></i> Unlike</button>
                       </form>
-                      <span class="pull-right text-muted"><?php echo $value["likes"]; ?> likes - 3 comments</span>
+                      <span class="pull-right text-muted"><?php echo $value["likes"]; ?> likes </span>
                     </div>
                     <?php 
 

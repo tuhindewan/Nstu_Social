@@ -108,6 +108,12 @@ class Post
 		return $result;
 	}
 
+	public function getUserSinglePost($userNameId){
+		$query = "SELECT * FROM posts WHERE user_id = '$userNameId'";
+		$result = $this->db->select($query);
+		return $result;
+	}
+
 }
 
 ?>

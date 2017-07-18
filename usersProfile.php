@@ -20,6 +20,7 @@ Session::checkSession();
 Session::init();
 $followerId = Session::get("userid");
 $username = Session::get("fullname");
+$user = Session::get("userName");
 
  ?>
 
@@ -28,6 +29,13 @@ require_once 'classes/Information.php';
 $info = new Information();
 
   ?>
+<?php 
+
+require_once 'classes/Post.php';
+$post = new Post();
+
+
+?>
 <!DOCTYPE html>
 <html lang="en">
   
@@ -82,7 +90,7 @@ $info = new Information();
             <li><a href="notify.php"><i class="fa fa-globe"></i></a></li>
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                <?php echo $userName; ?> <span class="caret"></span>
+                <?php echo $user; ?> <span class="caret"></span>
               </a>
               <ul class="dropdown-menu">
                 <li><a href="editProfile.php">Account Settings</a></li>
@@ -223,24 +231,36 @@ $info = new Information();
               </div>
               <?php 
               if ($isFollowing==True) { ?>
+
+              <?php 
+              $getInfo = $info->getUserData($userNameId);
+              if ($getInfo) {
+                foreach ($getInfo as  $value) {
+
+               ?>
               <div class="section">
-                <h3>Statistics</h3>
-                <p><span class="badge">Email</span> Following</p>
-                <p><span class="badge">124</span> Followers</p>
-                <p><span class="badge">620</span> Likes</p>
+                <h3>Basic Information</h3>
+                <ul class="list-unstyled list-social">
+                   <li><strong>Date of Birth:</strong></i>  <?php echo $value['birthDate']; ?></a></li>
+                   <li><strong>Gender:</strong></i>  <?php echo $value['gender']; ?></a></li>
+                   <li><strong>Department:</strong></i>  <?php echo $value['department']; ?></a></li>
+                   <li><strong>Seesion:</strong></i>  <?php echo $value['session']; ?></a></li> 
+                   <li><strong>Status:</strong></i>  <?php echo $value['status']; ?></a></li>                  
+                </ul>
               </div>
 
               <div class="section">
-                <h3>Social</h3>
+                <h3>Contact Information</h3>
                 <ul class="list-unstyled list-social">
-                  <li><a href="#"><i class="fa fa-twitter"></i> @jhongrwo</a></li>
-                  <li><a href="#"><i class="fa fa-facebook"></i> John grow</a></li>
-                  <li><a href="#"><i class="fa fa-dribbble"></i> johninizzie</a></li>
-                  <li><a href="#"><i class="fa fa-linkedin"></i> John grow</a></li>
+                  <li><strong>Email:</strong></i>  <?php echo $value['email']; ?></a></li>
+                  <li><strong>Phone:</strong></i>  <?php echo $value['phone']; ?></a></li>
+                  <li><strong>Website:</strong></i>  <?php echo $value['website']; ?></a></li>
                 </ul>
               </div>
+              <?php }} ?>
+
              <?php }else{ ?>
-                      <div class="section">
+              <div class="section">
                   <h3 style="color: #2dc3e8;">To see user profile, first become friend.</h3>
               </div>
             <?php   }  ?>
@@ -256,275 +276,66 @@ $info = new Information();
               <div class="profile-info-right">
                   <ul class="nav nav-pills nav-pills-custom-minimal custom-minimal-bottom">
                       <li class="active"><a href="#timeline" data-toggle="tab">Timeline</a></li>
-                      <li><a href="#followers" data-toggle="tab">Followers</a></li>
-                      <li><a href="#following" data-toggle="tab">Following</a></li>
                   </ul>
                   <div class="tab-content">
                       <!-- activities -->
-                      <div class="tab-pane fade in active" id="timeline">
+
+                        <div class="tab-pane fade in active" id="timeline">
                           <div class="media activity-item">
-                              <a href="#" class="pull-left">
-                                  <img src="img/Friends/guy-1.jpg" alt="Avatar" class="media-object avatar">
-                              </a>
-                              <div class="media-body">
-                                  <p class="activity-title"><a href="#">Antonius</a> started following <a href="#">Jack Bay</a> <small class="text-muted">- 2m ago</small></p>
-                                  <small class="text-muted">Today 08:30 am - 02.05.2014</small>
+                                                <!-- post -->
+                       <?php 
+
+                      if ($isFollowing==True) { ?>
+                      <?php 
+
+                        $getPost = $post->getUserSinglePost($userNameId);
+                        if ($getPost) {
+                          foreach ($getPost as  $value) {
+
+                       ?>
+                            <div class="box box-widget">
+                              <div class="box-header with-border">
+                                <div class="user-block">
+                                  <?php 
+                                    $query = "SELECT * FROM users WHERE id = '$userNameId'";
+                                    $getInfo = $db->select($query);
+                                  if ($getInfo) {
+                                    foreach ($getInfo as  $result) {
+                                    
+                                   ?>
+                                    <?php 
+                                    if ($result['avatar']) { ?>
+                                      <img class="img-circle" src="<?php echo $result['avatar']; ?>" alt="User Image">
+                                  <?php  }else{ ?>
+                                        <img class="img-circle" src="img/nophoto.jpg" alt="User Image">
+                                <?php    }   ?>
+                                  
+
+                                  <span class="username"><a href="#"><?php echo $result['fullName']; ?></a></span>
+                                  <?php }} ?>
+                                  <span class="description">Shared publicly - <?php echo  date("M j, Y h:ia",strtotime($value['posted_at'])) ; ?></span>
+                                </div>
                               </div>
-                              <div class="btn-group pull-right activity-actions">
-                                  <button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown">
-                                      <i class="fa fa-th"></i>
-                                      <span class="sr-only">Toggle Dropdown</span>
-                                  </button>
-                                  <ul class="dropdown-menu dropdown-menu-right" role="menu">
-                                      <li><a href="#">I don't want to see this</a></li>
-                                      <li><a href="#">Unfollow Antonius</a></li>
-                                      <li class="divider"></li>
-                                      <li><a href="#">Get Notification</a></li>
-                                  </ul>
+
+                              <div class="box-body" style="display: block;">
+                               <?php if ($value["postImage"]) { ?>
+                                  <img class="img-responsive show-in-modal" src="<?php echo $value["postImage"]; ?>" alt="Photo">
+                               <?php   } ?>
+                                <p><?php echo $value['body']; ?></p>
+
                               </div>
+                            </div><!--  end posts-->
+                            <?php }} ?>
                           </div>
-                          <div class="media activity-item">
-                              <a href="#" class="pull-left">
-                                  <img src="img/Friends/guy-2.jpg" alt="Avatar" class="media-object avatar">
-                              </a>
-                              <div class="media-body">
-                                  <p class="activity-title"><a href="#">Jane Doe</a> likes <a href="#">Jack Bay</a> <small class="text-muted">- 36m ago</small></p>
-                                  <small class="text-muted">Today 07:23 am - 02.05.2014</small>
-                              </div>
-                              <div class="btn-group pull-right activity-actions">
-                                  <button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown">
-                                      <i class="fa fa-th"></i>
-                                      <span class="sr-only">Toggle Dropdown</span>
-                                  </button>
-                                  <ul class="dropdown-menu dropdown-menu-right" role="menu">
-                                      <li><a href="#">I don't want to see this</a></li>
-                                      <li><a href="#">Unfollow Jane Doe</a></li>
-                                      <li class="divider"></li>
-                                      <li><a href="#">Get Notification</a></li>
-                                  </ul>
-                              </div>
-                          </div>
-                          <div class="media activity-item">
-                              <a href="#" class="pull-left">
-                                  <img src="img/Friends/guy-3.jpg" alt="Avatar" class="media-object avatar">
-                              </a>
-                              <div class="media-body">
-                                  <p class="activity-title"><a href="#">Michael</a> posted something for <a href="#">Jack Bay</a> <small class="text-muted">- 1h ago</small></p>
-                                  <small class="text-muted">Today 07:23 am - 02.05.2014</small>
-                                  <div class="activity-attachment">
-                                      <div class="well well-sm">
-                                          Professionally evolve corporate services without ethical leadership. Proactively re-engineer client-focused infrastructures before alternative potentialities. Competently predominate just in time e-tailers for leveraged solutions. Intrinsicly initiate end-to-end collaboration and idea-sharing after 24/365 ROI. Rapidiously.
-                                      </div>
-                                  </div>
-                              </div>
-                              <div class="btn-group pull-right activity-actions">
-                                  <button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown">
-                                      <i class="fa fa-th"></i>
-                                      <span class="sr-only">Toggle Dropdown</span>
-                                  </button>
-                                  <ul class="dropdown-menu dropdown-menu-right" role="menu">
-                                      <li><a href="#">I don't want to see this</a></li>
-                                      <li><a href="#">Unfollow Michael</a></li>
-                                      <li class="divider"></li>
-                                      <li><a href="#">Get Notification</a></li>
-                                  </ul>
-                              </div>
-                          </div>
-                          <div class="media activity-item">
-                              <a href="#" class="pull-left">
-                                  <img src="img/Friends/guy-5.jpg" alt="Avatar" class="media-object avatar">
-                              </a>
-                              <div class="media-body">
-                                  <p class="activity-title"><a href="#">Jack Bay</a> has uploaded two photos <small class="text-muted">- Yesterday</small></p>
-                                  <small class="text-muted">Yesterday 06:42 pm - 01.05.2014</small>
-                                  <div class="activity-attachment">
-                                      <div class="row">
-                                          <div class="col-md-6">
-                                              <a href="#" class="thumbnail">
-                                                  <img src="img/Friends/guy-1.jpg" alt="Uploaded photo">
-                                              </a>
-                                          </div>
-                                      </div>
-                                  </div>
-                              </div>
-                              <div class="btn-group pull-right activity-actions">
-                                  <button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown">
-                                      <i class="fa fa-th"></i>
-                                      <span class="sr-only">Toggle Dropdown</span>
-                                  </button>
-                                  <ul class="dropdown-menu dropdown-menu-right" role="menu">
-                                      <li><a href="#">I don't want to see this</a></li>
-                                      <li><a href="#">Unfollow Jack Bay</a></li>
-                                      <li class="divider"></li>
-                                      <li><a href="#">Get Notification</a></li>
-                                  </ul>
-                              </div>
-                          </div>
-                          <div class="media activity-item">
-                              <a href="#" class="pull-left">
-                                  <img src="img/Friends/guy-6.jpg" alt="Avatar" class="media-object avatar">
-                              </a>
-                              <div class="media-body">
-                                  <p class="activity-title"><a href="#">Jack Bay</a> has changed his profile picture <small class="text-muted">- 2 days ago</small></p>
-                                  <small class="text-muted">2 days ago 05:42 pm - 30.04.2014</small>
-                                  <div class="activity-attachment">
-                                      <a href="#" class="thumbnail">
-                                          <img src="img/Friends/guy-1.jpg" alt="Uploaded photo">
-                                      </a>
-                                  </div>
-                              </div>
-                              <div class="btn-group pull-right activity-actions">
-                                  <button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown">
-                                      <i class="fa fa-th"></i>
-                                      <span class="sr-only">Toggle Dropdown</span>
-                                  </button>
-                                  <ul class="dropdown-menu dropdown-menu-right" role="menu">
-                                      <li><a href="#">I don't want to see this</a></li>
-                                      <li><a href="#">Unfollow Jack Bay</a></li>
-                                      <li class="divider"></li>
-                                      <li><a href="#">Get Notification</a></li>
-                                  </ul>
-                              </div>
-                          </div>
-                          <button type="button" class="btn btn-default center-block"><i class="fa fa-refresh"></i> Load more activities</button>
                       </div>
+                     <?php }else{ ?>
+                          <div class="section">
+                              <h3 style="color: #2dc3e8;">To see users profile timeline, first become friend.</h3>
+                          </div>
+                     <?php }  ?>
+                      
                       <!-- end activities -->
-                      <!-- followers -->
-                      <div class="tab-pane fade" id="followers">
-                          <div class="media user-follower">
-                              <img src="img/Friends/guy-1.jpg" alt="User Avatar" class="media-object pull-left">
-                              <div class="media-body">
-                                  <a href="#">Antonius<br><span class="text-muted username">@mrantonius</span></a>
-                                  <button type="button" class="btn btn-sm btn-toggle-following pull-right">
-                                  <i class="fa fa-checkmark-round"></i> <span>Following</span></button>
-                              </div>
-                          </div>
-                          <div class="media user-follower">
-                              <img src="img/Friends/guy-2.jpg" alt="User Avatar" class="media-object pull-left">
-                              <div class="media-body">
-                                  <a href="#">Michael<br><span class="text-muted username">@iamichael</span></a>
-                                  <button type="button" class="btn btn-sm btn-default pull-right">
-                                  <i class="fa fa-plus"></i> Follow</button>
-                              </div>
-                          </div>
-                          <div class="media user-follower">
-                              <img src="img/Friends/woman-3.jpg" alt="User Avatar" class="media-object pull-left">
-                              <div class="media-body">
-                                  <a href="#">Stella<br><span class="text-muted username">@stella</span></a>
-                                  <button type="button" class="btn btn-sm btn-default pull-right">
-                                  <i class="fa fa-plus"></i> Follow</button>
-                              </div>
-                          </div>
-                          <div class="media user-follower">
-                              <img src="img/Friends/woman-4.jpg" alt="User Avatar" class="media-object pull-left">
-                              <div class="media-body">
-                                  <a href="#">Jane Doe<br><span class="text-muted username">@janed</span></a>
-                                  <button type="button" class="btn btn-sm btn-toggle-following pull-right">
-                                  <i class="fa fa-checkmark-round"></i> <span>Following</span></button>
-                              </div>
-                          </div>
-                          <div class="media user-follower">
-                              <img src="img/Friends/guy-5.jpg" alt="User Avatar" class="media-object pull-left">
-                              <div class="media-body">
-                                  <a href="#">John Simmons<br><span class="text-muted username">@jsimm</span></a>
-                                  <button type="button" class="btn btn-sm btn-default pull-right">
-                                  <i class="fa fa-plus"></i> Follow</button>
-                              </div>
-                          </div>
-                          <div class="media user-follower">
-                              <img src="img/Friends/guy-6.jpg" alt="User Avatar" class="media-object pull-left">
-                              <div class="media-body">
-                                  <a href="#">Antonius<br><span class="text-muted username">@mrantonius</span></a>
-                                  <button type="button" class="btn btn-sm btn-toggle-following pull-right">
-                                  <i class="fa fa-checkmark-round"></i> <span>Following</span></button>
-                              </div>
-                          </div>
-                          <div class="media user-follower">
-                              <img src="img/Friends/guy-6.jpg" alt="User Avatar" class="media-object pull-left">
-                              <div class="media-body">
-                                  <a href="#">Michael<br><span class="text-muted username">@iamichael</span></a>
-                                  <button type="button" class="btn btn-sm btn-default pull-right">
-                                  <i class="fa fa-plus"></i> Follow</button>
-                              </div>
-                          </div>
-                          <div class="media user-follower">
-                              <img src="img/Friends/woman-7.jpg" alt="User Avatar" class="media-object pull-left">
-                              <div class="media-body">
-                                  <a href="#">Stella<br><span class="text-muted username">@stella</span></a>
-                                  <button type="button" class="btn btn-sm btn-default pull-right">
-                                  <i class="fa fa-plus"></i> Follow</button>
-                              </div>
-                          </div>
-                          <div class="media user-follower">
-                              <img src="img/Friends/woman-1.jpg" alt="User Avatar" class="media-object pull-left">
-                              <div class="media-body">
-                                  <a href="#">Jane Doe<br><span class="text-muted username">@janed</span></a>
-                                  <button type="button" class="btn btn-sm btn-toggle-following pull-right">
-                                  <i class="fa fa-checkmark-round"></i> <span>Following</span></button>
-                              </div>
-                          </div>
-                          <div class="media user-follower">
-                              <img src="img/Friends/guy-2.jpg" alt="User Avatar" class="media-object pull-left">
-                              <div class="media-body">
-                                  <a href="#">John Simmons<br><span class="text-muted username">@jsimm</span></a>
-                                  <button type="button" class="btn btn-sm btn-default pull-right">
-                                  <i class="fa fa-plus"></i> Follow</button>
-                              </div>
-                          </div>
-                      </div>
-                      <!-- end followers -->
-                      <!-- following -->
-                      <div class="tab-pane fade" id="following">
-                          <div class="media user-following">
-                              <img src="img/Friends/woman-1.jpg" alt="User Avatar" class="media-object pull-left">
-                              <div class="media-body">
-                                  <a href="#">Stella<br><span class="text-muted username">@stella</span></a>
-                                  <button type="button" class="btn btn-sm btn-danger pull-right">
-                                  <i class="fa fa-close-round"></i> Unfollow</button>
-                              </div>
-                          </div>
-                          <div class="media user-following">
-                              <img src="img/Friends/woman-2.jpg" alt="User Avatar" class="media-object pull-left">
-                              <div class="media-body">
-                                  <a href="#">Jane Doe<br><span class="text-muted username">@janed</span></a>
-                                  <button type="button" class="btn btn-sm btn-danger pull-right">
-                                  <i class="fa fa-close-round"></i> Unfollow</button>
-                              </div>
-                          </div>
-                          <div class="media user-following">
-                              <img src="img/Friends/guy-3.jpg" alt="User Avatar" class="media-object pull-left">
-                              <div class="media-body">
-                                  <a href="#">John Simmons<br><span class="text-muted username">@jsimm</span></a>
-                                  <button type="button" class="btn btn-sm btn-danger pull-right">
-                                  <i class="fa fa-close-round"></i> Unfollow</button>
-                              </div>
-                          </div>
-                          <div class="media user-following">
-                              <img src="img/Friends/guy-4.jpg" alt="User Avatar" class="media-object pull-left">
-                              <div class="media-body">
-                                  <a href="#">Antonius<br><span class="text-muted username">@mrantonius</span></a>
-                                  <button type="button" class="btn btn-sm btn-danger pull-right">
-                                  <i class="fa fa-close-round"></i> Unfollow</button>
-                              </div>
-                          </div>
-                          <div class="media user-following">
-                              <img src="img/Friends/guy-5.jpg" alt="User Avatar" class="media-object pull-left">
-                              <div class="media-body">
-                                  <a href="#">Michael<br><span class="text-muted username">@iamichael</span></a>
-                                  <button type="button" class="btn btn-sm btn-danger pull-right">
-                                  <i class="fa fa-close-round"></i> Unfollow</button>
-                              </div>
-                          </div>
-                          <div class="media user-following">
-                              <img src="img/Friends/woman-6.jpg" alt="User Avatar" class="media-object pull-left">
-                              <div class="media-body">
-                                  <a href="#">Stella<br><span class="text-muted username">@stella</span></a>
-                                  <button type="button" class="btn btn-sm btn-danger pull-right">
-                                  <i class="fa fa-close-round"></i> Unfollow</button>
-                              </div>
-                          </div>
-                      </div>
-                      <!-- end following -->
+                     
                   </div>
               </div>
           </div>

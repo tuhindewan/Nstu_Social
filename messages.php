@@ -25,31 +25,11 @@ if ($result) {
 
 ?>
 <?php 
+require_once 'classes/Message.php';
+$msg = new Message();
 
-  if (isset($_POST['send'])) {
-    if (!isset($_POST['nocsrf'])) {
-                die("INVALID TOKEN");
-        }
-        if ($_POST['nocsrf'] != $_SESSION['token']) {
-                die("INVALID TOKEN");
-        }
-    $body = $_POST['body'];
-    $receiver = htmlspecialchars($_GET['receiver']);
-    $query = "SELECT id FROM users WHERE id = '$receiver'";
-    $result = $db->select($query);
-    if ($result) {
-      $query = "INSERT INTO messages (body,sender,receiver,seen,time) VALUES ('$body','$userId','$receiver','0',NOW())";
-      $resut = $db->insert($query);
-      if ($resut) {
-        echo "message sent";
-    }
-    }else{
-      die("Invalid ID");
-    }
-    
-  }
+ ?>
 
-?>
 <!DOCTYPE html>
 <html lang="en">
   
@@ -62,8 +42,8 @@ if ($result) {
     <meta name="description" content="">
     <meta name="keywords" content="">
     <meta name="author" content="">
-    <link rel="icon" href="img/favicon.png">
-    <title>Day-Day</title>
+    <link rel="icon" href="img/nstu.png">
+    <title>NSTUSocial | A Social Communication Site For NSTU</title>
     <!-- Bootstrap core CSS -->
     <link href="bootstrap.3.3.6/css/bootstrap.min.css" rel="stylesheet">
     <link href="font-awesome.4.6.1/css/font-awesome.min.css" rel="stylesheet">
@@ -125,211 +105,149 @@ if ($result) {
     <div class="container page-content">
     <div class="row">
       <div class="tile tile-alt" id="messages-main">
-      
-
-
-      <?php 
-        if (isset($_GET['msgId'])) { ?>
-
-
-          <div class="ms-body">
-          <div class="action-header clearfix">
-              <div class="visible-xs" id="ms-menu-trigger">
-                  <i class="fa fa-bars"></i>
-              </div>
-              
-              <div class="pull-left hidden-xs">
-                  <img src="img/Friends/guy-2.jpg" alt="" class="img-avatar m-r-10">
-                  <div class="lv-avatar pull-left">
-                      
-                  </div>
-                  <span>David Parbell</span>
-              </div>
-               
-              <ul class="ah-actions actions">
-                  <li>
-                      <a href="#">
-                          <i class="fa fa-trash"></i>
-                      </a>
-                  </li>
-                  <li>
-                      <a href="#">
-                          <i class="fa fa-check"></i>
-                      </a>
-                  </li>
-                  <li>
-                      <a href="#">
-                          <i class="fa fa-clock-o"></i>
-                      </a>
-                  </li>
-                  <li class="dropdown">
-                      <a href="#" data-toggle="dropdown" aria-expanded="true">
-                          <i class="fa fa-sort"></i>
-                      </a>
-          
-                      <ul class="dropdown-menu dropdown-menu-right">
-                          <li>
-                              <a href="#">Latest</a>
-                          </li>
-                          <li>
-                              <a href="#">Oldest</a>
-                          </li>
-                      </ul>
-                  </li>                             
-                  <li class="dropdown">
-                      <a href="#" data-toggle="dropdown" aria-expanded="true">
-                          <i class="fa fa-bars"></i>
-                      </a>
-          
-                      <ul class="dropdown-menu dropdown-menu-right">
-                          <li>
-                              <a href="#">Refresh</a>
-                          </li>
-                          <li>
-                              <a href="#">Message Settings</a>
-                          </li>
-                      </ul>
-                  </li>
-              </ul>
-          </div>
-        
-      
-
-          <?php 
-
-
-          $msgId = $_GET['msgId'];            
-          $query = "SELECT * FROM messages WHERE id = '$msgId' AND (receiver = '$userId' OR sender = '$userId')";
-          $messages = $db->select($query);
-          if ($messages) {
-            foreach ($messages as $message) {
-              $sender = $message['sender'];
-              $query = "SELECT * FROM users WHERE id = '$sender' ";
-              $result = $db->select($query);
-              if ($result) {
-                foreach ($result as $sender ) {
-         ?>
-
-          <div class="message-feed media">
-          <?php 
-          if ($sender['avatar']) { ?>
-            <div class="pull-left">
-                  <img src="<?php echo $sender['avatar']; ?>" alt="" class="img-avatar">
-              </div>
-        <?php  }else{ ?>
-
-        <div class="pull-left">
-                  <img src="img/nophoto.jpg" alt="" class="img-avatar">
-              </div>
-        <?php }   ?>
-              
-              <div class="media-body">
-                  <div class="mf-content">
-                      <?php echo htmlspecialchars($message['body']); ?>
-                  </div>
-     
-                  <small class="mf-date"><i class="fa fa-clock-o"></i> <?php echo  date("M j, Y h:ia",strtotime($message['time'])) ; ?></small>
-              </div>
-          </div>
-          <?php }} ?>
-        <?php }} ?>
-          
-          <?php 
-
-        if ($message['sender'] == $userId) {
-                $id = $message['receiver'];
-        } else {
-                $id = $message['sender'];
-        }
-
-        $query = "UPDATE messages SET seen = '1' WHERE id = '$msgId'";
-        $update = $db->update($query);
-
-           ?>
-
-          <form action="messages.php?receiver=<?php echo $id;?>" method="POST" >
-            
-              <div class="msb-reply">
-                  <textarea name="body" placeholder="Type Message Here..."></textarea>
-                  <input type="hidden" name="nocsrf" value="<?php echo $_SESSION['token']; ?>">
-                  <button type="submit" name="send"><i class="fa fa-paper-plane-o"></i></button>
-              </div>
-
-          </form>
-      </div>
-              
-           <?php }else{ ?>
-            <div class="ms-menu">
+      <div class="ms-menu">
           <div class="ms-user clearfix">
-          <?php 
-            if ($avatar) { ?>
               <img src="<?php echo $avatar; ?>" alt="" class="img-avatar pull-left">
-           <?php }else{ ?>
-           <img src="img/nophoto.jpg" alt="" class="img-avatar pull-left">
-       <?php  }   ?>
-              
-              <div>Signed in as <br> <?php echo $username ?> <br>
-
-                  Username: <small><?php echo $userName; ?></small>
-              </div>
+              <div>Signed in as <br> <?php echo $userName; ?></div>
           </div>
           
           <div class="p-15">
               <div class="dropdown">
-                <a class="btn btn-azure btn-block" href="#" data-toggle="dropdown">Messages</a>
+                  <a class="btn btn-azure btn-block" href="#" data-toggle="dropdown">Contacts</a>
               </div>
           </div>
           
           <div class="list-group lg-alt">
-              <?php 
+            <?php 
+               $query = "SELECT * FROM followers WHERE follower_id = '$userId'";
+                $result = $db->select($query);
+              if ($result) {
+              foreach ($result as $value) {
+                $friendId = $value['user_id'];
 
-                $query = "SELECT * FROM messages WHERE sender = '$userId' OR receiver = '$userId' ";
-                $messages = $db->select($query);
-                if ($messages) {
-                  foreach ($messages as $message) {
-                    if (strlen($message['body']) > 10) {
-                            $m = substr($message['body'], 0, 10)." ....";
-                    } else {
-                            $m = $message['body'];
-                    }
-                    $sender = $message['sender'];
-                    $query = "SELECT * FROM users WHERE id = '$sender' ";
-                    $result = $db->select($query);
-                    if ($result) {
-                      foreach ($result as $sender ) {
-               ?>
-              <a class="list-group-item media" href="messages.php?msgId=<?php echo $message['id']; ?>">
+              $sel_query = "SELECT * FROM users WHERE id = '$friendId'";
+              $res = $db->select($sel_query);
+              if ($res) {
+              foreach ($res as  $value) {
+
+
+             ?>
+
+              <a class="list-group-item media" href="messages.php?friendId=<?php echo $friendId; ?>">
+                    <?php 
+                    if ($value['avatar']) { ?>
+                      <div class="pull-left">
+                      <img src="<?php echo $value['avatar']; ?>" alt="" class="img-avatar">
+                      </div>
+                   <?php }else{ ?>
                   <div class="pull-left">
-                      <?php 
-                        if ($avatar) { ?>
-                          <img src="<?php echo $avatar; ?>" alt="" class="img-avatar ">
-                       <?php }else{ ?>
-                       <img src="img/nophoto.jpg" alt="" class="img-avatar ">
-                   <?php  }   ?>
+                      <img src="img/nophoto.jpg" alt="" class="img-avatar">
                   </div>
+                 <?php  }    ?>
+
+
                   <div class="media-body">
-                      <?php 
-                      if ($message['seen']==0) { ?>
-                        <strong><small class="list-group-item-text c-gray"><?php echo $m; ?></small>
-                      <h5>FROM</h5>
-                      <small class="list-group-item-heading"><?php echo $sender['fullName']; ?></small><br>
-                      <small>Unseen</small></strong>
-                     <?php }else{ ?>
-                        <small class="list-group-item-text c-gray"><?php echo $m; ?></small>
-                      <h5>sent by</h5>
-                      <small class="list-group-item-heading"><?php echo $sender['fullName']; ?></small><br>
-                      <small>Seen</small>
-                    <?php }  ?>
+                      <small class="list-group-item-heading"><?php echo $value['fullName']; ?></small><br>
+                      <small class="list-group-item-text c-gray"><?php echo $value['username']; ?> </small>
+                  </div>
+              </a>
+
+            <?php }}}} ?>
+          </div>
+      </div>
+
+<?php 
+
+if (isset($_GET['friendId'])) { ?>
+        
+
+        <div class="ms-body">
+          <div class="action-header clearfix">
+              <div class="visible-xs" id="ms-menu-trigger">
+                  <i class="fa fa-bars"></i>
+              </div>
+
+              <?php 
+              $friendId = $_GET['friendId'];
+              $query = "SELECT * FROM users WHERE id = '$friendId'";
+              $result = $db->select($query);
+              if ($result) {
+                foreach ($result as  $value) {
+
+               ?>
+              <div class="pull-left hidden-xs">
+                  <?php 
+                  if ($value['avatar']) { ?>
+                    <img src="<?php echo $value['avatar']; ?>" alt="" class="img-avatar m-r-10">
+                 <?php }else{?>
+                  <img src="img/nophoto.jpg" alt="" class="img-avatar m-r-10">
+                 <?php } ?>
+
+
+                  <div class="lv-avatar pull-left">
                       
                   </div>
-              </a> 
-              <?php }} ?>
-              <?php }} ?>
-          </div>        
-      </div>
-                    
+                  <span><?php echo $value['fullName']; ?></span>
+              </div>
 
-           <?php } ?>
+               <?php }} ?> 
+          </div>
+
+                <?php 
+                $sendMsg = $msg->getSendMessage($userId);
+                if ($sendMsg) {
+                  foreach ($sendMsg as  $value) {
+                    $sender = $value['sender'];
+
+                 ?>
+          <div class="message-feed media">
+          <?php 
+          $query = "SELECT avatar FROM users WHERE id = '$sender'";
+          $res = $db->select($query);
+          if ($res) {
+           foreach ($res as $result) {
+
+           ?>
+              <div class="pull-left">
+                  <img src="<?php echo $result['avatar']; ?>" alt="" class="img-avatar">
+              </div>
+          <?php }} ?>
+              <div class="media-body">
+                  <div class="mf-content">
+                      <?php echo $value['body']; ?>
+                  </div>
+                  <small class="mf-date"><i class="fa fa-clock-o"></i> <?php echo  date("M j, Y h:ia",strtotime($value['time'])) ; ?></small>
+              </div>
+
+          </div>
+               <?php }} ?>  
+               
+          
+          <div class="msb-reply">
+          <?php 
+          if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['send'])) {
+            $friendId = $_GET['friendId'];
+            $userMsg = $msg->userMessageData($_POST,$userId,$friendId);
+          }
+
+           ?>
+            <form action="" method="POST">
+              <textarea name="message" placeholder="Type messages..."></textarea>
+              <button type="submit" name="send"><i class="fa fa-paper-plane-o"></i></button>
+            </form>
+          </div>
+      </div>
+<?php }else{?>
+
+      <div class="ms-body">
+          <h3 style="color: #2dc3e8;">First choose your friend for beginning the conversetion.</h3>
+      </div>
+
+<?php } ?>
+
+
+
+
 
       </div>
     </div>
